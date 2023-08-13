@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
-	import addMonths from 'date-fns/addYears';
+	import addMonths from 'date-fns/addMonths';
 	import type { GroupedEvent } from '$lib/types/GroupedEvent';
 	export let groupedEvents: GroupedEvent[][];
 	export let axisKeys: { x: keyof GroupedEvent; y: keyof GroupedEvent };
@@ -24,6 +24,11 @@
 		});
 		labels.push(groupedEvents[i][0].eventType.replaceAll('_', ' '));
 	}
+	const xAxisMax = addMonths(new Date(), 3).toISOString();
+
+	//TODO
+	//fix font color
+	//add title
 
 	const donutChart = onMount(
 		() =>
@@ -46,14 +51,15 @@
 								tooltipFormat: 'yyyy-MMM'
 							},
 							min: new Date().toISOString(),
-							max: addMonths(new Date(), 3).toISOString()
+							max: xAxisMax
 						},
 						y: {
 							display: true
 						}
 					},
+                    responsive: true,
+                    aspectRatio: 2,
 					maintainAspectRatio: false,
-					//aspectRatio: 3,
 					plugins: {
 						legend: {
 							display: true,
@@ -70,5 +76,6 @@
 			})
 	);
 </script>
-
+<div class='relative min-h-[400px]'>
 <canvas bind:this={canvasRef} />
+</div>
