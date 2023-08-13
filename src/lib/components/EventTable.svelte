@@ -1,58 +1,139 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
 	import { writable } from 'svelte/store';
-    import { addColumnFilters, addSortBy, textPrefixFilter } from 'svelte-headless-table/plugins';
+    import { addColumnFilters, addExpandedRows, addGroupBy, addSortBy, addSubRows, textPrefixFilter } from 'svelte-headless-table/plugins';
     import TextFilter from '$lib/utilities/TextFilter.svelte';
 	import type { IEvent } from '../types/IEvent';
+	import SortImage from './charts/utils/SortImage.svelte';
+    import { getDistinct, mean, latest } from './Tables/utils/utils'
 
 	export let events: IEvent[];
 	const eventStore = writable(events);
 	const table = createTable(eventStore, {
         sort: addSortBy(),
         colFilter: addColumnFilters(),
+        group: addGroupBy(), // TODO not sure if I need this
+        expand: addExpandedRows(),
     });
 	const columns = table.createColumns([
-		table.column({
-			header: 'Title',
-			accessor: 'title'
-		}),
-        table.column({
-            header: 'Event Type',
-            accessor: 'eventType',
-            plugins: {
-                colFilter: {
-                        fn: textPrefixFilter,
-                        render: ({ filterValue }) => createRender(TextFilter, {filterValue}),
-                    }
+       /* table.display({
+            id: 'expanded',
+            header: '',
+            cell: ({ row }, { pluginStates }) => {
+                const {
+                    isExpanded,
+                    canExpand,
+                    isAllSubRowsExpanded,
+                } = pluginStates.expand.getRowState(row);
+                return createRender(ExpandIndicator, {
+                    depth: row.depth,
+                    isExpanded,
+                    canExpand,
+                    isAllSubRowsExpanded,
+                })
             }
         }),
-        table.column({
-            header: 'Average Price',
-            accessor: 'averagePrice'
-        }),
-        table.column({
-            header: 'Created',
-            accessor: 'created_at'
-        }),
-		table.column({
-			header: 'Announce Date',
-			accessor: 'announceDate'
+        */
+        table.group({
+            header: 'Events Grouped by Type',
+            columns: [
+                table.column({
+                    header: 'Event Type',
+                    accessor: 'eventType',
+                    plugins: {
+                        colFilter: {
+                            fn: textPrefixFilter,
+                            render: ({ filterValue }) => createRender(TextFilter, {filterValue})
+                        }
+                    }
+                }),
+		        table.column({
+			        header: 'Title',
+			        accessor: 'title',
+                    plugins: {
+                        group: {
+                            disable: true,
+                            getAggregateValue: (values) => getDistinct(values).length,
+                            cell: ({ value }) => `${value} unique`,
+                        }
+                    },
+                })
+            ]
 		}),
-        table.column({
-            header: 'Event Date',
-            accessor: 'eventDate'
+        table.group({
+            header: 'Details',
+            columns: [
+            table.column({
+                header: 'Average Price',
+                accessor: 'averagePrice',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => mean(values),
+                        cell: ({ value }) => `${value.toFixed(3)} (avg)`,
+                    }
+                }
             }),
-		table.column({
-			header: 'Event Popularity',
-			accessor: 'eventPopularity',
-		}),
-		table.column({
-			header: 'Event Score',
-			accessor: 'eventScore'
+            table.column({
+                header: 'Created',
+                accessor: 'created_at',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => latest(values),
+                        cell: ({ value }) => `${value} is Latest`
+                    }
+                }   
             }),
+		    table.column({
+			    header: 'Announce Date',
+			    accessor: 'announceDate',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => latest(values),
+                        cell: ({ value }) => `${value} is Latest`
+                    }
+                } 
+		    }),
+            table.column({
+                header: 'Event Date',
+                accessor: 'eventDate',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => latest(values),
+                        cell: ({ value }) => `${value} is Latest`
+                    }
+                } 
+            }),
+		    table.column({
+			    header: 'Event Popularity',
+			    accessor: 'eventPopularity',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => mean(values),
+                        cell: ({ value }) => `${value.toFixed(3)} (avg)`,
+                    }
+                }
+		    }),
+		    table.column({
+			    header: 'Event Score',
+			    accessor: 'eventScore',
+                plugins: {
+                    group: {
+                        disable: true,
+                        getAggregateValue: (values) => mean(values),
+                        cell: ({ value }) => `${value.toFixed(3)} (avg)`,
+                    }
+                }
+            }),
+        ]})
 	]);
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
-    //TODO code split the svgs
+    //TODO remove the sorting options from the header groups
+    //TODO change the search to an enum
 </script>
 
 <div class="relative rounded-xl overflow-auto border border-surface-600 w-fit">
@@ -70,34 +151,29 @@
 										class="min-w-[150px] border-l border-r first:border-l-0 last:border-r-0 border-surface-600"
 									>
 										<Render of={cell.render()} />
-                                        <div>
-                                        {#if props.colFilter?.render !== undefined}
-                                            <Render of={props.colFilter.render} />
+                                        {#if !props.group.disabled}
+                                        <button on:click={props.group.toggle} class='btn btn-sm'>
+                                            {#if props.group.grouped}
+                                                Ungroup
+                                            {:else}
+                                                Group
+                                            {/if}
+                                        </button>
                                         {/if}
+                                        <div class='flex p-2'>
                                             {#if props.sort.order === 'asc'}
-                                                    <svg width="32" height="32" viewBox="0 0 32 32" class='fill-token' xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M28.7067 21.7075C28.8943 21.5199 29 21.2652 29 21C29 20.7348 28.8946 20.4804 28.7071 20.2929C28.5196 20.1054 28.2652 20 28 20C27.7348 20 27.4804 20.1054 27.2929 20.2929L23 24.5858L18.7072 20.293C18.5196 20.1054 18.2652 20 18 20C17.7348 20 17.4804 20.1054 17.2929 20.2929C17.1054 20.4804 17 20.7348 17 21C17 21.2652 17.1054 21.5196 17.2929 21.7071L22.2929 26.7071C22.4804 26.8946 22.7348 27 23 27C23.2652 27 23.5196 26.8946 23.7071 26.7071L28.7067 21.7075Z"/>
-                                                            <path d="M22 14V26C22 26.5523 22.4477 27 23 27C23.5523 27 24 26.5523 24 26V14C24 13.4477 23.5523 13 23 13C22.4477 13 22 13.4477 22 14Z"/>
-                                                            <path d="M6 17H15C15.5523 17 16 16.5523 16 16C16 15.4477 15.5523 15 15 15H6C5.44772 15 5 15.4477 5 16C5 16.5523 5.44772 17 6 17Z"/>
-                                                            <path d="M6 9H23C23.5523 9 24 8.55228 24 8C24 7.44772 23.5523 7 23 7H6C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9Z"/>
-                                                            <path d="M6 25H13C13.5523 25 14 24.5523 14 24C14 23.4477 13.5523 23 13 23H6C5.44772 23 5 23.4477 5 24C5 24.5523 5.44772 25 6 25Z"/>
-                                                        </svg>                                                
-                                                    {:else if props.sort.order === 'desc'}
-                                                    <svg width="32" height="32" viewBox="0 0 32 32" class='fill-token' xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M27.2924 11.7066L27.2929 11.7071C27.4804 11.8946 27.7348 12 28 12C28.2652 12 28.5196 11.8946 28.7071 11.7071C28.8946 11.5196 29 11.2652 29 11C29 10.7348 28.8946 10.4804 28.7071 10.2929L23.7071 5.29289C23.5196 5.10536 23.2652 5 23 5C22.7348 5 22.4804 5.10536 22.2929 5.29289L17.2933 10.2925L17.2929 10.2929C17.1054 10.4804 17 10.7348 17 11C17 11.2652 17.1054 11.5196 17.2929 11.7071C17.4804 11.8946 17.7348 12 18 12C18.2652 12 18.5196 11.8946 18.7071 11.7071L18.7075 11.7067L23 7.41421L27.2924 11.7066Z"/>
-                                                        <path d="M24 18V6C24 5.44772 23.5523 5 23 5C22.4477 5 22 5.44772 22 6V18C22 18.5523 22.4477 19 23 19C23.5523 19 24 18.5523 24 18Z"/>
-                                                        <path d="M6 17H15C15.5523 17 16 16.5523 16 16C16 15.4477 15.5523 15 15 15H6C5.44772 15 5 15.4477 5 16C5 16.5523 5.44772 17 6 17Z"/>
-                                                        <path d="M6 9H13C13.5523 9 14 8.55228 14 8C14 7.44772 13.5523 7 13 7H6C5.44772 7 5 7.44772 5 8C5 8.55228 5.44772 9 6 9Z"/>
-                                                        <path d="M6 25H23C23.5523 25 24 24.5523 24 24C24 23.4477 23.5523 23 23 23H6C5.44772 23 5 23.4477 5 24C5 24.5523 5.44772 25 6 25Z"/>
-                                                    </svg>
-                                                    {:else}
-                                                    <svg width="32" height="32" viewBox="0 0 32 32" class='fill-token' xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M6.72727 17H22.2727C23.2267 17 24 16.5523 24 16C24 15.4477 23.2267 15 22.2727 15H6.72727C5.77333 15 5 15.4477 5 16C5 16.5523 5.77333 17 6.72727 17Z"/>
-                                                        <path d="M7.11111 9H21.8889C23.0548 9 24 8.55228 24 8C24 7.44772 23.0548 7 21.8889 7H7.11111C5.94518 7 5 7.44772 5 8C5 8.55228 5.94518 9 7.11111 9Z"/>
-                                                        <path d="M6 25H23C23.5523 25 24 24.5523 24 24C24 23.4477 23.5523 23 23 23H6C5.44772 23 5 23.4477 5 24C5 24.5523 5.44772 25 6 25Z"/>
-                                                    </svg>                            
-                                                    {/if}
-                                                    </div>
+                                                <SortImage sortOrder={'asc'} />        
+                                            {:else if props.sort.order === 'desc'}
+                                                <SortImage sortOrder={'desc'} />
+                                            {:else if !props.sort.disabled}
+                                                <SortImage sortOrder={'none'} />
+                                            {/if}
+                                            {#if props.colFilter?.render !== undefined}
+                                                <div on:click|stopPropagation on:keypress|stopPropagation>
+                                                    <Render of={props.colFilter.render} />
+                                                </div>
+                                            {/if}
+                                        </div>
 									</th>
 								</Subscribe>
 							{/each}

@@ -6,6 +6,6 @@
 <input
     type='text'
     bind:value={$filterValue}
-    placeholder="search"
+    placeholder="Search"
     class='input w-32 h-8 font-normal'
 />
