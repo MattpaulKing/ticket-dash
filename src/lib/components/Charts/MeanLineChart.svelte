@@ -57,8 +57,8 @@
 							display: true
 						}
 					},
-                    responsive: true,
-                    aspectRatio: 2,
+					responsive: true,
+					aspectRatio: 2,
 					maintainAspectRatio: false,
 					plugins: {
 						legend: {
@@ -72,10 +72,11 @@
 							}
 						}
 					}
-				}
+				},
 			})
 	);
 </script>
-<div class='relative min-h-[400px]'>
-<canvas bind:this={canvasRef} />
+
+<div class="relative min-h-[400px]">
+	<canvas bind:this={canvasRef} />
 </div>

@@ -5,16 +5,20 @@
 	import EventTable from '$lib/components/EventTable.svelte';
 	export let data;
 	const monthlyEventAggs = data.monthlyEventTypeAggs;
+
 	const totalEventAggs = data.totalEventTypeAggs;
 	const topTotalEventAggs = totalEventAggs.slice(0, 4);
 	let splitMonthlyEventAggs: GroupedEvent[][] = [];
+
 	for (let i = 0; i < topTotalEventAggs.length; ++i) {
 		splitMonthlyEventAggs.push(
 			monthlyEventAggs.filter((agg) => agg.eventType === topTotalEventAggs[i].eventType)
 		);
 	}
-    //TODO make the grid cards responsive
+	//TODO make the grid cards responsive
+	const something = 1;
 </script>
+
 <div>
 	<h1 class="h1">Event Types</h1>
 	<div
@@ -44,7 +48,7 @@
 			{/each}
 		</div>
 		<div class="col-span-3 card p-4 h-full">
-            <h3>Average Price by Event Date</h3>
+			<h3>Average Price by Event Date</h3>
 			<MeanLineChart
 				groupedEvents={splitMonthlyEventAggs}
 				axisKeys={{ x: 'calendarMonth', y: 'meanPrice' }}

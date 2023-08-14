@@ -1,31 +1,33 @@
-<script lang='ts'>
+<script lang="ts">
+	import CaretCircleDown from './CaretCircleDown.svelte';
+	import CaretCircleRight from './CaretCircleRight.svelte';
+
 	export let isExpanded;
 	export let canExpand;
 	export let isAllSubRowsExpanded;
 	export let depth: number;
-
-    const interactionHandler = () => {
-        $isExpanded = !$isExpanded
-     }
 </script>
 
 {#if $canExpand}
-	<span on:click={() => $isExpanded = !$isExpanded}  on:keypress={() => $isExpanded = !$isExpanded}  style:--depth={depth}>
+	<span
+		on:click={() => ($isExpanded = !$isExpanded)}
+		on:keypress={() => ($isExpanded = !$isExpanded)}
+		style:--depth={depth}
+	>
 		{#if $isExpanded}
 			{#if $isAllSubRowsExpanded}
-				expanded
+				<svelte:component this={CaretCircleRight} />
 			{:else}
-			   expand 	
+				expand
 			{/if}
 		{:else}
-		canExpand	
+			<svelte:component this={CaretCircleDown} />
 		{/if}
 	</span>
 {/if}
 
 <style>
 	span {
-		padding-left: "1rem";
+		padding-left: '1rem';
 	}
 </style>
-
