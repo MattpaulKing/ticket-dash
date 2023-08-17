@@ -3,9 +3,9 @@
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
 	import addMonths from 'date-fns/addMonths';
-	import type { GroupedEvent } from '$lib/types/GroupedEvent';
-	export let groupedEvents: GroupedEvent[];
-	export let axisKeys: { x: keyof GroupedEvent; y: keyof GroupedEvent };
+	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
+	export let groupedEvents: TMonthlyAggType[];
+	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
 	let canvasRef: HTMLCanvasElement;
 
 	const chartPoints = groupedEvents.map((agg) => ({
@@ -60,4 +60,3 @@
 </script>
 
 <canvas bind:this={canvasRef} />
-

@@ -26,3 +26,12 @@ export function clickOutside(node: HTMLElement, opts?: string) {
 export const toTitleCase = (str: string, delimiter: string) => {
   return str.split(delimiter).map( (word) => word[0].toUpperCase() + word.slice(1)).join(" ")
 }
+
+export function indexOfFirstUppercase(str: string) {
+    for (let i=0; i<str.length; ++i) {
+        if (str.charAt(i) === str.charAt(i).toUpperCase()) {
+            return i
+        }
+    }
+    return -1
+}

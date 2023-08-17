@@ -1,14 +1,14 @@
 <script lang="ts">
-	import LineChart from '$lib/components/charts/LineChart.svelte';
 	import MeanLineChart from '$lib/components/Charts/MeanLineChart.svelte';
-	import type { GroupedEvent } from '$lib/types/GroupedEvent.js';
 	import EventTable from '$lib/components/EventTable.svelte';
+	import KpiCard from '$lib/components/KpiCard.svelte';
+	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs.js';
 	export let data;
 	const monthlyEventAggs = data.monthlyEventTypeAggs;
 
 	const totalEventAggs = data.totalEventTypeAggs;
 	const topTotalEventAggs = totalEventAggs.slice(0, 4);
-	let splitMonthlyEventAggs: GroupedEvent[][] = [];
+	let splitMonthlyEventAggs: TMonthlyAggType[][] = [];
 
 	for (let i = 0; i < topTotalEventAggs.length; ++i) {
 		splitMonthlyEventAggs.push(
@@ -16,7 +16,6 @@
 		);
 	}
 	//TODO make the grid cards responsive
-	const something = 1;
 </script>
 
 <div>
@@ -25,8 +24,8 @@
 		class="container grid grid-cols-5 grid-rows-1 mt-8 gap-6 h-full w-full mx-auto justify-center items-center"
 	>
 		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6">
-			<!-- Price diff from yesterday -->
 			{#each topTotalEventAggs as agg}
+				<!-- Price diff from yesterday
 				<div class="card p-4">
 					<h4 class="text-lg capitalize">{agg.eventType.replaceAll('_', ' ')}</h4>
 					<div class="grid grid-cols-3">
@@ -45,6 +44,14 @@
 						</h3>
 					</div>
 				</div>
+            -->
+				<KpiCard
+					chartData={monthlyEventAggs.filter((monthAgg) => monthAgg.eventType === agg.eventType)}
+					axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
+					aggData={agg}
+					titleAccessor={'eventType'}
+					kpiAccessor={'totalListingCount'}
+				/>
 			{/each}
 		</div>
 		<div class="col-span-3 card p-4 h-full">

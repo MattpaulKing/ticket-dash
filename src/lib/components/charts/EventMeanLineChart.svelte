@@ -2,30 +2,13 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
-	import addMonths from 'date-fns/addMonths';
-	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
-	export let groupedEvents: TMonthlyAggType[][];
-	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
+	import { chartDataTransformer } from './utils/chartDataTransformer';
+	export let events;
+	export let axisKeys;
 
 	let canvasRef: HTMLCanvasElement;
-	const datasets: { label: string; data: { x: string; y: number }[] }[] = [];
-	const labels: string[] = [];
-	for (let i = 0; i < groupedEvents.length; ++i) {
-		let dataset: { x: string; y: number }[] = [];
-		for (let j = 0; j < groupedEvents[i].length; ++j) {
-			dataset.push({
-				x: groupedEvents[i][j][axisKeys.x] as string,
-				y: groupedEvents[i][j][axisKeys.y] as number
-			});
-		}
-		datasets.push({
-			label: groupedEvents[i][0].eventType.replaceAll('_', ' '),
-			data: dataset
-		});
-		labels.push(groupedEvents[i][0].eventType.replaceAll('_', ' '));
-	}
-	const xAxisMax = addMonths(new Date(), 3).toISOString();
-
+	const dataset = chartDataTransformer(events, axisKeys);
+	console.log(events);
 	//TODO
 	//fix font color
 	//add title
@@ -36,8 +19,11 @@
 				type: 'line',
 				data: {
 					// labels: range of Dates,
-					datasets: datasets,
-					labels: labels
+					datasets: [
+						{
+							data: dataset
+						}
+					]
 				},
 				options: {
 					scales: {
@@ -48,10 +34,8 @@
 								displayFormats: {
 									month: 'yyyy-MMM'
 								},
-								tooltipFormat: 'yyyy-MMM'
-							},
-							min: new Date().toISOString(),
-							max: xAxisMax
+								tooltipFormat: 'yyyy-MMM-dd'
+							}
 						},
 						y: {
 							display: true
@@ -62,7 +46,7 @@
 					maintainAspectRatio: false,
 					plugins: {
 						legend: {
-							display: true,
+							display: false,
 							position: 'top',
 							labels: {
 								color: 'white',
