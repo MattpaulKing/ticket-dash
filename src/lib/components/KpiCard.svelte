@@ -16,7 +16,7 @@
 		<div class="flex col-start-1 col-span-3 place-items-baseline">
 			<p class="mr-2">Listings:</p>
 			<h3
-				class="text-xl col-start-3 justify-self-end {aggData.totalListingCount > 0
+				class="text-xl col-start-3 justify-self-end {aggData[kpiAccessor] > 0
 					? 'text-success-500'
 					: 'text-error-500'}"
 			>

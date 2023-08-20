@@ -5,13 +5,13 @@
 	import { chartDataTransformer } from './utils/chartDataTransformer';
 	import { htmlLegendPlugin } from './utils/htmlLegend';
 	export let events;
-	export let axisKeys;
 	export let eventAggs;
-	console.log(eventAggs);
+	export let stateAggs;
+	export let axisKeys;
 	let canvasRef: HTMLCanvasElement;
 	const dataset = chartDataTransformer(events, axisKeys);
 	const eventTypeAggs = chartDataTransformer(eventAggs, axisKeys);
-	//const lineChart =
+	const stateAggsDS = chartDataTransformer(stateAggs, { x: 'eventDate', y: axisKeys.y });
 	onMount(
 		() =>
 			new Chart(canvasRef, {
@@ -26,6 +26,10 @@
 						{
 							data: eventTypeAggs,
 							label: eventAggs[0].eventType
+						},
+						{
+							data: stateAggsDS,
+							label: 'State'
 						}
 					]
 				},
