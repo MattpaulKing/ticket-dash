@@ -40,9 +40,9 @@
 			{/await}
 		</div>
 	</div>
-	<div class="card w-full">
+	<div class="card w-full p-4">
 		<div class="flex h-14">
-			<h1 class=" font-3xl mt-4 ml-4">Event Prices by Date</h1>
+			<h1 class=" font-3xl mt-4 ml-4">Event Prices by Created Date</h1>
 			<form class="z-10 ml-auto p-4">
 				<select class="select w-40" bind:value={yAxisSelected}>
 					{#each yAxisKeys as selector}
@@ -56,9 +56,20 @@
 		{#await data.streamed.events}
 			loading...
 		{:then events}
-			{#key yAxisSelected}
-				<EventMeanLineChart events={events.data} axisKeys={{ x: 'created_at', y: yAxisSelected }} />
-			{/key}
+			{#await data.streamed.eventAggs}
+				loading...
+			{:then eventAggs}
+				{#key yAxisSelected}
+					<div id="legend-container" />
+					<EventMeanLineChart
+						events={events.data}
+						eventAggs={eventAggs.data}
+						axisKeys={{ x: 'created_at', y: yAxisSelected }}
+					/>
+				{/key}
+			{:catch err1}
+				{err1}
+			{/await}
 		{:catch error}
 			Error
 		{/await}

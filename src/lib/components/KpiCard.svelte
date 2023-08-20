@@ -4,20 +4,25 @@
 	export let chartData: TMonthlyAggType[];
 	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
 	export let aggData: TTotalAggType;
-	export let titleAccessor: keyof TTotalAggType;
+	export let titleAccessor: 'eventType';
 	export let kpiAccessor: keyof TTotalAggType;
 </script>
 
 <div class="card p-4">
-	<h4 class="text-lg capitalize">{titleAccessor}</h4>
+	<h4 class="text-lg capitalize overflow-hidden whitespace-nowrap">
+		{aggData[titleAccessor].replaceAll('_', ' ')}
+	</h4>
 	<div class="grid grid-cols-3">
+		<div class="flex col-start-1 col-span-3 place-items-baseline">
+			<p class="mr-2">Listings:</p>
+			<h3
+				class="text-xl col-start-3 justify-self-end {aggData.totalListingCount > 0
+					? 'text-success-500'
+					: 'text-error-500'}"
+			>
+				{new Intl.NumberFormat().format(aggData[kpiAccessor])}
+			</h3>
+		</div>
 		<LineChart groupedEvents={chartData} {axisKeys} />
-		<h3
-			class="text-2xl col-start-3 justify-self-end {aggData.totalListingCount > 0
-				? 'text-success-500'
-				: 'text-error-500'}"
-		>
-			{new Intl.NumberFormat().format(aggData[kpiAccessor])}
-		</h3>
 	</div>
 </div>

@@ -3,17 +3,16 @@
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
 	import { chartDataTransformer } from './utils/chartDataTransformer';
+	import { htmlLegendPlugin } from './utils/htmlLegend';
 	export let events;
 	export let axisKeys;
-
+	export let eventAggs;
+	console.log(eventAggs);
 	let canvasRef: HTMLCanvasElement;
 	const dataset = chartDataTransformer(events, axisKeys);
-	console.log(events);
-	//TODO
-	//fix font color
-	//add title
-
-	const donutChart = onMount(
+	const eventTypeAggs = chartDataTransformer(eventAggs, axisKeys);
+	//const lineChart =
+	onMount(
 		() =>
 			new Chart(canvasRef, {
 				type: 'line',
@@ -21,7 +20,12 @@
 					// labels: range of Dates,
 					datasets: [
 						{
-							data: dataset
+							data: dataset,
+							label: events[0].title
+						},
+						{
+							data: eventTypeAggs,
+							label: eventAggs[0].eventType
 						}
 					]
 				},
@@ -45,6 +49,9 @@
 					aspectRatio: 2,
 					maintainAspectRatio: false,
 					plugins: {
+						htmlLegend: {
+							containerID: 'legend-container'
+						},
 						legend: {
 							display: false,
 							position: 'top',
@@ -56,7 +63,8 @@
 							}
 						}
 					}
-				}
+				},
+				plugins: [htmlLegendPlugin]
 			})
 	);
 </script>

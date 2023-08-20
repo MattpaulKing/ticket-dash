@@ -4,6 +4,8 @@
 	import 'chartjs-adapter-date-fns';
 	import addMonths from 'date-fns/addMonths';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
+	import { htmlLegendPlugin } from '../charts/utils/htmlLegend';
+
 	export let groupedEvents: TMonthlyAggType[][];
 	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
 
@@ -61,22 +63,26 @@
 					aspectRatio: 2,
 					maintainAspectRatio: false,
 					plugins: {
+						htmlLegend: {
+							containerID: 'legend-container'
+						},
 						legend: {
-							display: true,
-							position: 'top',
-							labels: {
-								color: 'white',
-								boxWidth: 10
-								//filter: (item, data) => (item.index ? item.index < 3 : true),
-								//sort: (a, b) => (a.index ? (b.index ? a.index - b.index : 1) : 1)
-							}
+							display: false
+							//position: 'top',
+							//labels: {
+							//	color: 'white',
+							//	boxWidth: 10
+							//filter: (item, data) => (item.index ? item.index < 3 : true),
+							//sort: (a, b) => (a.index ? (b.index ? a.index - b.index : 1) : 1)
+							//}
 						}
 					}
-				}
+				},
+				plugins: [htmlLegendPlugin]
 			})
 	);
 </script>
 
-<div class="relative min-h-[400px]">
+<div class="relative min-h-[350px]">
 	<canvas bind:this={canvasRef} />
 </div>

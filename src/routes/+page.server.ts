@@ -10,8 +10,7 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     }
 
     totalEventTypeAggs.sort((a: TTotalAggType, b: TTotalAggType) => b.rank - a.rank)
-    const { data: monthlyEventTypeAggs, error: monthlyEventTypeAggsError }: { data: TMonthlyAggType[], error: any } =
-        await locals.supabase.rpc("get_event_type_by_calendar_month", {
+    const {data: monthlyEventTypeAggs, error: monthlyEventTypeAggsError } = await locals.supabase.rpc("get_event_type_by_calendar_month", {
             event_type_a: totalEventTypeAggs[0].eventType,
             event_type_b: totalEventTypeAggs[1].eventType,
             event_type_c: totalEventTypeAggs[2].eventType,
@@ -23,10 +22,10 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     }
 
     return {
-        monthlyEventTypeAggs,
         totalEventTypeAggs,
+        monthlyEventTypeAggs,
         streamed: {
-            events: events()
+            events: events(),
         },
     }
 };

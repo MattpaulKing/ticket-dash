@@ -5,6 +5,7 @@
 		addColumnFilters,
 		addExpandedRows,
 		addGroupBy,
+		addResizedColumns,
 		addSortBy,
 		textPrefixFilter
 	} from 'svelte-headless-table/plugins';
@@ -13,16 +14,24 @@
 	import SortImage from './charts/utils/SortImage.svelte';
 	import { getDistinct, mean, latest } from './Tables/utils/utils';
 	import ExpandIndicator from './Tables/utils/ExpandIndicator.svelte';
+	import EventTitleLink from './Tables/utils/EventTitleLink.svelte';
 
 	export let events: IEvent[];
 	const eventStore = writable(events);
 	const table = createTable(eventStore, {
 		group: addGroupBy({ initialGroupByIds: ['eventType'] }),
 		sort: addSortBy({
-			toggleOrder: ['desc', 'asc']
+			toggleOrder: ['desc', 'asc'],
+			initialSortKeys: [
+				{
+					id: 'averagePrice',
+					order: 'desc'
+				}
+			]
 		}),
 		colFilter: addColumnFilters(),
-		expand: addExpandedRows()
+		expand: addExpandedRows(),
+		resize: addResizedColumns()
 	});
 	const columns = table.createColumns([
 		table.display({
@@ -50,6 +59,7 @@
 				table.column({
 					header: 'Event Type',
 					accessor: 'eventType',
+					cell: ({ value }) => value.replaceAll('_', ' '),
 					plugins: {
 						colFilter: {
 							fn: textPrefixFilter,
@@ -79,13 +89,23 @@
 			},
 			columns: [
 				table.column({
+					header: 'Link',
+					accessor: 'eventId',
+					cell: ({ value }) => createRender(EventTitleLink, { eventId: value }),
+					plugins: {
+						group: {
+							disable: true
+						}
+					}
+				}),
+				table.column({
 					header: 'Average Price',
 					accessor: 'averagePrice',
 					plugins: {
 						group: {
 							disable: true,
 							getAggregateValue: (values) => mean(values),
-							cell: ({ value }) => `${value.toFixed(3)} (avg)`
+							cell: ({ value }) => `${value.toFixed(2)} (avg)`
 						}
 					}
 				}),
@@ -96,7 +116,7 @@
 						group: {
 							disable: true,
 							getAggregateValue: (values) => latest(values),
-							cell: ({ value }) => `${value} is Latest`
+							cell: ({ value }) => `Latest: ${value}`
 						}
 					}
 				}),
@@ -107,7 +127,7 @@
 						group: {
 							disable: true,
 							getAggregateValue: (values) => latest(values),
-							cell: ({ value }) => `${value} is Latest`
+							cell: ({ value }) => `Latest: ${value}`
 						}
 					}
 				}),
@@ -125,6 +145,7 @@
 				table.column({
 					header: 'Event Popularity',
 					accessor: 'eventPopularity',
+					cell: ({ value }) => value.toFixed(3),
 					plugins: {
 						group: {
 							disable: true,
@@ -136,6 +157,7 @@
 				table.column({
 					header: 'Event Score',
 					accessor: 'eventScore',
+					cell: ({ value }) => value.toFixed(3),
 					plugins: {
 						group: {
 							disable: true,
@@ -148,7 +170,6 @@
 		})
 	]);
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
-	//TODO remove the sorting options from the header groups
 	//TODO change the search to an enum
 </script>
 
@@ -169,7 +190,7 @@
 									<th
 										{...attrs}
 										on:click={props.sort.toggle}
-										class="min-w-[150px] border-t border-l border-r first:border-l-0 last:border-r-0 border-surface-600 pt-2"
+										class="min-w-[100px] border-t border-l border-r first:border-l-0 last:border-r-0 border-surface-600 pt-2"
 									>
 										<Render of={cell.render()} />
 										{#if !props.group.disabled}

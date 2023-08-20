@@ -4,11 +4,10 @@
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs.js';
 	export let data;
-	const monthlyEventAggs = data.monthlyEventTypeAggs;
-
 	const totalEventAggs = data.totalEventTypeAggs;
 	const topTotalEventAggs = totalEventAggs.slice(0, 4);
 	let splitMonthlyEventAggs: TMonthlyAggType[][] = [];
+	const monthlyEventAggs = data.monthlyEventTypeAggs;
 
 	for (let i = 0; i < topTotalEventAggs.length; ++i) {
 		splitMonthlyEventAggs.push(
@@ -23,28 +22,8 @@
 	<div
 		class="container grid grid-cols-5 grid-rows-1 mt-8 gap-6 h-full w-full mx-auto justify-center items-center"
 	>
-		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6">
+		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
 			{#each topTotalEventAggs as agg}
-				<!-- Price diff from yesterday
-				<div class="card p-4">
-					<h4 class="text-lg capitalize">{agg.eventType.replaceAll('_', ' ')}</h4>
-					<div class="grid grid-cols-3">
-						<LineChart
-							groupedEvents={monthlyEventAggs.filter(
-								(monthAgg) => monthAgg.eventType === agg.eventType
-							)}
-							axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
-						/>
-						<h3
-							class="text-2xl col-start-3 justify-self-end {agg.totalListingCount > 0
-								? 'text-success-500'
-								: 'text-error-500'}"
-						>
-							{new Intl.NumberFormat().format(agg.totalListingCount)}
-						</h3>
-					</div>
-				</div>
-            -->
 				<KpiCard
 					chartData={monthlyEventAggs.filter((monthAgg) => monthAgg.eventType === agg.eventType)}
 					axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
@@ -55,16 +34,17 @@
 			{/each}
 		</div>
 		<div class="col-span-3 card p-4 h-full">
-			<h3>Average Price by Event Date</h3>
+			<h3 class="ml-3 text-xl">Average Price by Event Date</h3>
+			<div id="legend-container" />
 			<MeanLineChart
 				groupedEvents={splitMonthlyEventAggs}
 				axisKeys={{ x: 'calendarMonth', y: 'meanPrice' }}
 			/>
 		</div>
 	</div>
-	<div class="col-span-5">
+	<div class="col-span-5 mt-6">
 		{#await data.streamed.events}
-			<div class="bg-red-400 h-40 w-40" />
+            loading...
 		{:then events}
 			<div class="mt-4">
 				<EventTable events={events.data} />
