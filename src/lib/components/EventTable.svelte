@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createTable, Subscribe, Render, createRender } from 'svelte-headless-table';
+	import { toTitleCase } from '$lib/utilities/utils';
 	import { writable } from 'svelte/store';
 	import {
 		addColumnFilters,
@@ -59,7 +60,7 @@
 				table.column({
 					header: 'Event Type',
 					accessor: 'eventType',
-					cell: ({ value }) => value.replaceAll('_', ' '),
+					cell: ({ value }) => toTitleCase(value, '_'),
 					plugins: {
 						colFilter: {
 							fn: textPrefixFilter,

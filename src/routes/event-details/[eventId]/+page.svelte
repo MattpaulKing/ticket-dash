@@ -15,10 +15,8 @@
 	};
 
 	//TODO
-	// doesn't invalidate on navigation to another eventId from an eventId
 	// divide the listing counts by the number of events
 	// change the stateAgg to be created_at rather than eventDate
-	$: console.log($page.params.eventId);
 </script>
 
 {#key $page.params.eventId}
