@@ -35,3 +35,7 @@ export function indexOfFirstUppercase(str: string) {
     }
     return -1
 }
+
+export const getComparisonAveragePrice = (a) => {
+ return ((a.medianPrice - a.comparisonAveragePrice) / a.comparisonAveragePrice) * 100
+}

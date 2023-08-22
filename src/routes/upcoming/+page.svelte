@@ -1,27 +1,18 @@
 <script lang="ts">
-	import EventCompared from '$lib/components/Cards/EventCompared.svelte';
+	import { toTitleCase } from '$lib/utilities/utils';
+	import EventsCompared from '$lib/components/Cards/EventsCompared.svelte';
 	export let data;
 </script>
 
-{#await data.streamed.announcedLastThreeDays}
-	loading...
-{:then announcedLastThreeDays}
-	<div class="grid grid-cols-3 gap-2">
-		{#each announcedLastThreeDays.data as event}
-			<EventCompared {event} typeOfComparison={'eventType'} />
-		{/each}
+<div class="grid grid-cols-[3fr_7fr]">
+	<div class="card p-4 text-token">
+		<h1 class="text-xl font-bold">Events Announced in the Last Three Days</h1>
+		<p class="leading-4 text-opacity-50">With Price > 0</p>
+		<hr class="my-3" />
+		{#await data.streamed.announcedLastThreeDays}
+			loading . . .
+		{:then announcedLastThreeDays}
+			<EventsCompared events={announcedLastThreeDays.data} />
+		{/await}
 	</div>
-{/await}
-
-<!-- Do a list like this instead with agg views 
-<dl class="list-dl">
-	<div>
-		<span class="badge bg-primary-500">💀</span>
-		<span class="flex-auto">
-			<dt>Title</dt>
-			<dd>Description</dd>
-		</span>
-	</div>
-    insert content here
-</dl>
--->
+</div>

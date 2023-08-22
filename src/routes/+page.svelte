@@ -3,6 +3,7 @@
 	import EventTable from '$lib/components/EventTable.svelte';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs.js';
+	import { page } from '$app/stores';
 	export let data;
 	const totalEventAggs = data.totalEventTypeAggs;
 	const topTotalEventAggs = totalEventAggs.slice(0, 4);
@@ -15,6 +16,7 @@
 		);
 	}
 	//TODO make the grid cards responsive
+	console.log($page.route.id);
 </script>
 
 <div>
@@ -44,7 +46,7 @@
 	</div>
 	<div class="col-span-5 mt-6">
 		{#await data.streamed.events}
-            loading...
+			loading...
 		{:then events}
 			<div class="mt-4">
 				<EventTable events={events.data} />

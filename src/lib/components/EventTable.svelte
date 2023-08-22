@@ -174,9 +174,9 @@
 	//TODO change the search to an enum
 </script>
 
-<div class="relative rounded-xl overflow-auto border border-surface-600 w-fit">
+<div class="relative rounded-xl overflow-auto border border-surface-600 w-full">
 	<div class="shadow-sm overflow-hidden card">
-		<table {...$tableAttrs} class="border-collapse table-auto">
+		<table {...$tableAttrs} class="border-collapse table-auto w-full">
 			<thead>
 				{#each $headerRows as headerRow (headerRow.id)}
 					<Subscribe

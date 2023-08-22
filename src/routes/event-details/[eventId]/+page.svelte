@@ -17,6 +17,7 @@
 	//TODO
 	// divide the listing counts by the number of events
 	// change the stateAgg to be created_at rather than eventDate
+	// Chart spills over table
 </script>
 
 {#key $page.params.eventId}
@@ -111,7 +112,7 @@
 		{#await data.streamed.stateEvents}
 			loading...
 		{:then events}
-			<div class="mt-4">
+			<div class="mt-4 w-full">
 				<EventTable events={events.data} />
 			</div>
 		{/await}
