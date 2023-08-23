@@ -45,9 +45,7 @@
 								>
 							</Tooltip>
 						{:else}
-							<Tooltip text={eventType}>
 								<option value={eventType}>{toTitleCase(eventType, '_')}</option>
-							</Tooltip>
 						{/if}
 						<hr />
 					{/each}
