@@ -5,27 +5,22 @@
 	import { Drawer, drawerStore, Avatar, AppShell, AppBar } from '@skeletonlabs/skeleton';
 	import Navigation from '$lib/components/Navigation.svelte';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
-	import { clickOutside } from '$lib/utilities/utils';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { chartColors } from '$lib/components/stores/colorStore';
-	import { writable } from 'svelte/store';
 	import { Chart } from 'chart.js/auto';
+	import Search from '$lib/components/Filters/Search.svelte';
+	export let data;
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
 	Chart.defaults.plugins.title.color = 'white';
 	Chart.defaults.plugins.title.display = true;
 	Chart.defaults.plugins.legend.align = 'start';
-    Chart.defaults.scales.time.ticks.color = 'white'
-    Chart.defaults.scales.linear.ticks.color = 'white'
+	Chart.defaults.scales.time.ticks.color = 'white';
+	Chart.defaults.scales.linear.ticks.color = 'white';
 	const drawerOpen = () => {
 		drawerStore.open();
 	};
 
-	const drawerClose = () => {
-		drawerStore.close();
-	};
-
+	//TODO add initials component
 	let initials = 'MK';
 	let menu = false;
 </script>
@@ -55,6 +50,7 @@
 				>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
+				<Search eventTypes={data.distinctEventTypes} />
 				<LightSwitch />
 				<div id="avatar-button">
 					<div class="relative inline-block">

@@ -9,14 +9,14 @@ export const load = async ({ fetch, data, depends }) => {
     event: { fetch },
     serverSession: data.sessionData.session,
   })
-
   const {
     data: { session },
   } = await supabase.auth.getSession()
-  
+ const distinctEventTypes = data.distinctEventTypes 
 
   return { 
     supabase,
     session,
+    distinctEventTypes, 
   }
 }

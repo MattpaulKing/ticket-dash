@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { toTitleCase } from '$lib/utilities/utils';
 	import EventsCompared from '$lib/components/Cards/EventsCompared.svelte';
 	export let data;
 </script>
@@ -13,6 +12,8 @@
 			loading . . .
 		{:then announcedLastThreeDays}
 			<EventsCompared events={announcedLastThreeDays.data} />
+		{:catch error}
+			{error}
 		{/await}
 	</div>
 </div>
