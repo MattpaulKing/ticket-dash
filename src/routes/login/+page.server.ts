@@ -26,7 +26,7 @@ export const actions = {
 }
 
 
-export const load = async ({locals }: {locals: App.Locals }) => {
+export const load = async ({ locals }: {locals: App.Locals }) => {
   return {
    x: 'hi' 
   }

@@ -26,12 +26,16 @@
 	}
 
 	async function signInWithAzure() {
-		const { error } = await supabase.auth.signInWithOAuth({
+		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider: 'azure',
 			options: {
 				scopes: 'email offline_access'
 			}
 		});
+
+		console.log(data);
+		console.log(error);
+
 		if (error) {
 			//TODO redirect to error page throw error(500, '');
 		}

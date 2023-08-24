@@ -2,7 +2,7 @@ import type { TMonthlyAggType, TTotalAggType } from "$lib/types/MonthlyEventAggs
 import { error } from "@sveltejs/kit";
 
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs18.x',
 };
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
