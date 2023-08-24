@@ -5,8 +5,8 @@
 
 <div class="grid grid-cols-[3fr_7fr]">
 	<div class="card p-4 text-token">
-		<h1 class="text-xl font-bold">Events Announced in the Last Three Days</h1>
-		<p class="leading-4 text-opacity-50">With Price > 0</p>
+		<h1 class="text-xl font-bold">Just Announced</h1>
+		<p class="leading-4 text-opacity-50">Last Three Days</p>
 		<hr class="my-3" />
 		{#await data.streamed.announcedLastThreeDays}
 			loading . . .

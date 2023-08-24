@@ -8,6 +8,8 @@
 	import { page } from '$app/stores';
 	import { Chart } from 'chart.js/auto';
 	import Search from '$lib/components/Filters/Search.svelte';
+	import { invalidate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	export let data;
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
@@ -50,7 +52,7 @@
 				>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<Search eventTypes={data.distinctEventTypes} />
+				<Search eventTypes={data.distinctEventTypes} states={data.distinctStates} />
 				<LightSwitch />
 				<div id="avatar-button">
 					<div class="relative inline-block">

@@ -14,12 +14,13 @@
 				<span class="ml-2 flex flex-col badge bg-surface-500 h-fit">💀</span>
 				<span class="flex flex-col">
 					<span class="flex w-full">
-						{event.title} - {toTitleCase(event.eventType, '_')}
+						<h1>{event.title} - {toTitleCase(event.eventType, '_')}</h1>
 					</span>
 					<span class="flex w-full space-x-2 place-items-center">
-						<p>
-							{event.medianPrice}
-						</p>
+						<div class="flex gap-1 h-min">
+							<p class="text-surface-400">Mean Price:</p>
+							<p>{event.medianPrice}</p>
+						</div>
 						{#if getComparisonAveragePrice(event) > 0}
 							<p class="text-xs text-primary-500">
 								+{getComparisonAveragePrice(event).toFixed(2)}%
