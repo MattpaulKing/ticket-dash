@@ -1,6 +1,10 @@
 import type { TMonthlyAggType, TTotalAggType } from "$lib/types/MonthlyEventAggs";
 import { error } from "@sveltejs/kit";
 
+export const config = {
+  runtime: 'edge',
+};
+
 export const load = async ({ locals }: { locals: App.Locals }) => {
 
     const { data: totalEventTypeAggs, error: totalEventTypeAggsError }: { data: TTotalAggType[], error: any } = await locals.supabase.rpc("get_total_listing_by_type")
@@ -10,7 +14,7 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     }
 
     totalEventTypeAggs.sort((a: TTotalAggType, b: TTotalAggType) => b.rank - a.rank)
-    const {data: monthlyEventTypeAggs, error: monthlyEventTypeAggsError } = await locals.supabase.rpc("get_event_type_by_calendar_month", {
+    const {data: monthlyEventTypeAggs, error: monthlyEventTypeAggsError }: {data: TMonthlyAggType, error: any } = await locals.supabase.rpc("get_event_type_by_calendar_month", {
             event_type_a: totalEventTypeAggs[0].eventType,
             event_type_b: totalEventTypeAggs[1].eventType,
             event_type_c: totalEventTypeAggs[2].eventType,
