@@ -8,8 +8,8 @@
 
 	export let filterValues;
 	let filtersVisible = false;
-	console.log(filterValues);
 
+	//TODO add input store for the eventType store to build out of
 	let titleSearchStore = writable(filterValues.distinctTitles);
 	let eventTypeStore = writable(filterValues.distinctTypes);
 	let eventsRangeStore: Writable<[Date, Date]> = writable([

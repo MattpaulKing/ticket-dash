@@ -3,7 +3,6 @@
 	import EventTable from '$lib/components/EventTable.svelte';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs.js';
-	import { ProgressBar } from '@skeletonlabs/skeleton';
 
 	export let data;
 
@@ -13,6 +12,8 @@
 
 	const monthlyEventTypeAggs = getMonthlyEventTypeAggs();
 
+	//TODO
+	// put this function on the server
 	async function getMonthlyEventTypeAggs() {
 		const { data: monthlyEventAggs, error } = await data.streamed.monthlyEventTypeAggs;
 		for (let i = 0; i < topTotalEventAggs.length; ++i) {
