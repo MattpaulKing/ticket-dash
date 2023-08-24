@@ -8,8 +8,7 @@
 	import { page } from '$app/stores';
 	import { Chart } from 'chart.js/auto';
 	import Search from '$lib/components/Filters/Search.svelte';
-	import { invalidate } from '$app/navigation';
-	import { onMount } from 'svelte';
+
 	export let data;
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
@@ -25,13 +24,19 @@
 	//TODO add initials component
 	let initials = 'MK';
 	let menu = false;
+
+	const filterValues = {
+		distinctTitles: data.distinctTitles,
+		distinctTypes: data.distinctEventTypes,
+		minMaxDates: data.minMaxDates,
+		distinctStates: data.distinctStates
+	};
 </script>
 
 <Drawer width="md:w-48" rounded="rounded-2xl">
 	<Navigation />
 </Drawer>
-<!-- <AppShell>...</AppShell> -->
-<!-- App Shell -->
+
 <AppShell slotSidebarLeft="w-0 xl:w-40 bg-surface-500/10" slotHeader="bg-surface-600/10">
 	<svelte:fragment slot="header">
 		<AppBar>
@@ -52,7 +57,7 @@
 				>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<Search eventTypes={data.distinctEventTypes} states={data.distinctStates} />
+				<Search {filterValues} />
 				<LightSwitch />
 				<div id="avatar-button">
 					<div class="relative inline-block">

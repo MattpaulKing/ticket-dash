@@ -3,20 +3,32 @@
 	import EventTable from '$lib/components/EventTable.svelte';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs.js';
-	import { page } from '$app/stores';
+	import { ProgressBar } from '@skeletonlabs/skeleton';
+
 	export let data;
+
 	const totalEventAggs = data.totalEventTypeAggs;
 	const topTotalEventAggs = totalEventAggs.slice(0, 4);
 	let splitMonthlyEventAggs: TMonthlyAggType[][] = [];
-	const monthlyEventAggs = data.monthlyEventTypeAggs;
 
-	for (let i = 0; i < topTotalEventAggs.length; ++i) {
-		splitMonthlyEventAggs.push(
-			monthlyEventAggs.filter((agg) => agg.eventType === topTotalEventAggs[i].eventType)
-		);
+	const monthlyEventTypeAggs = getMonthlyEventTypeAggs();
+
+	async function getMonthlyEventTypeAggs() {
+		const { data: monthlyEventAggs, error } = await data.streamed.monthlyEventTypeAggs;
+		for (let i = 0; i < topTotalEventAggs.length; ++i) {
+			splitMonthlyEventAggs.push(
+				monthlyEventAggs.filter((agg) => agg.eventType === topTotalEventAggs[i].eventType)
+			);
+		}
+		if (error) {
+			error(500, 'Error fetching monthly events');
+		}
+		return monthlyEventAggs;
 	}
-	//TODO make the grid cards responsive
-	console.log($page.route.id);
+
+	//TODO
+	//make the grid cards responsive
+	//add skeleton loading state
 </script>
 
 <div>
@@ -24,26 +36,40 @@
 	<div
 		class="container grid grid-cols-5 grid-rows-1 mt-8 gap-6 h-full w-full mx-auto justify-center items-center"
 	>
-		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
-			{#each topTotalEventAggs as agg}
-				<KpiCard
-					chartData={monthlyEventAggs.filter((monthAgg) => monthAgg.eventType === agg.eventType)}
-					axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
-					aggData={agg}
-					titleAccessor={'eventType'}
-					kpiAccessor={'totalListingCount'}
+		{#await monthlyEventTypeAggs}
+			<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
+				{#each { length: 4 } as card}
+					<div class="card placeholder rounded-container-token animate-pulse h-52 w-72" />
+				{/each}
+			</div>
+			<div class="placeholder card rounded-container-token col-span-3 card p-4 h-[457px] w-[912px]">
+				<h3 class="ml-3 text-xl">Average Price by Event Date</h3>
+			</div>
+		{:then monthlyEventAggs}
+			<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
+				{#each topTotalEventAggs as agg}
+					<KpiCard
+						chartData={monthlyEventAggs.filter((monthAgg) => monthAgg.eventType === agg.eventType)}
+						axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
+						aggData={agg}
+						titleAccessor={'eventType'}
+						kpiAccessor={'totalListingCount'}
+					/>
+				{/each}
+			</div>
+			<div class="col-span-3 card p-4 h-full">
+				<h3 class="ml-3 text-xl">Average Price by Event Date</h3>
+				<div id="legend-container" />
+				<MeanLineChart
+					groupedEvents={splitMonthlyEventAggs}
+					axisKeys={{ x: 'calendarMonth', y: 'meanPrice' }}
 				/>
-			{/each}
-		</div>
-		<div class="col-span-3 card p-4 h-full">
-			<h3 class="ml-3 text-xl">Average Price by Event Date</h3>
-			<div id="legend-container" />
-			<MeanLineChart
-				groupedEvents={splitMonthlyEventAggs}
-				axisKeys={{ x: 'calendarMonth', y: 'meanPrice' }}
-			/>
-		</div>
+			</div>
+		{:catch error}
+			{error}
+		{/await}
 	</div>
+
 	<div class="col-span-5 mt-6">
 		{#await data.streamed.events}
 			loading...

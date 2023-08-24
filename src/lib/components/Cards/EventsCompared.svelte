@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { toTitleCase, getComparisonAveragePrice } from '$lib/utilities/utils';
 	export let events;
-	//TODO replace the skull with imgs
 	events = events.sort((a, b) => getComparisonAveragePrice(b) - getComparisonAveragePrice(a));
+	//TODO
+	// replace the skull with imgs
+	// add a section for similar events
+	//  a. include same type of event
+	//  b. +- some popularity
+	//  c. +- some score
+	//  d. can be closed events
 </script>
 
 <dl class="list-dl max-h-80 overflow-y-auto">

@@ -14,12 +14,15 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     }
 
     totalEventTypeAggs.sort((a: TTotalAggType, b: TTotalAggType) => b.rank - a.rank)
-    const {data: monthlyEventTypeAggs, error: monthlyEventTypeAggsError }: {data: TMonthlyAggType, error: any } = await locals.supabase.rpc("get_event_type_by_calendar_month", {
-            event_type_a: totalEventTypeAggs[0].eventType,
-            event_type_b: totalEventTypeAggs[1].eventType,
-            event_type_c: totalEventTypeAggs[2].eventType,
-            event_type_d: totalEventTypeAggs[3].eventType,
-        })
+
+    const monthlyEventTypeAggs = async () => {
+      return await locals.supabase.rpc("get_event_type_by_calendar_month", {
+        event_type_a: totalEventTypeAggs[0].eventType,
+        event_type_b: totalEventTypeAggs[1].eventType,
+        event_type_c: totalEventTypeAggs[2].eventType,
+        event_type_d: totalEventTypeAggs[3].eventType,
+      })
+    }
 
     const events = async () => {
         return await locals.supabase.rpc("get_event_type_table", { lim: 20, skip: 0 })
@@ -27,9 +30,9 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
 
     return {
         totalEventTypeAggs,
-        monthlyEventTypeAggs,
         streamed: {
             events: events(),
+            monthlyEventTypeAggs: monthlyEventTypeAggs(), 
         },
     }
 };
