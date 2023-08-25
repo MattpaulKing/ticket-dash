@@ -77,6 +77,8 @@
 						/>
 					</div>
 					{#if menu}
+          <div class='relative'>
+            <div class='absolute'>
 						<p>found me</p>
 					{/if}
 				</div>

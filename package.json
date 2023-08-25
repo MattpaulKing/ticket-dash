@@ -48,6 +48,7 @@
 		"chart.js": "^4.3.2",
 		"chartjs-adapter-date-fns": "^3.0.0",
 		"date-fns": "^2.30.0",
+		"fuzzysort": "^2.0.4",
 		"svelte-chartjs": "^3.1.2"
 	}
 }

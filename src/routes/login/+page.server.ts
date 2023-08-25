@@ -22,10 +22,9 @@ export const actions = {
   },
 }
 
-//TODO fix supabase not having access to this page
-//
 export const load = async ({ locals }: {locals: App.Locals }) => {
+  const session = await locals.getSession()
   return {
-    x: 'hi', 
+    session 
   }
 }

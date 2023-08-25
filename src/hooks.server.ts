@@ -18,11 +18,11 @@ export const handle: Handle = async ({ event, resolve }) => {
     return session
   }
 
-  if (event.url.pathname.startsWith('/upcoming')) {
+  if (!event.url.pathname.startsWith('/login')) {
     const session = await event.locals.getSession()
     if (!session) {
       // the user is not signed in
-      throw redirect(303, '/')
+      throw redirect(303, '/login')
     }
   }
 
