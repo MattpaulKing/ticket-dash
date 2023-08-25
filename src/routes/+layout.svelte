@@ -8,7 +8,7 @@
 	import { page } from '$app/stores';
 	import { Chart } from 'chart.js/auto';
 	import Search from '$lib/components/Filters/Search.svelte';
-  import type { FilterOptions } from '$lib/types/FilterOptions'
+	import type { FilterOptions } from '$lib/types/FilterOptions';
 
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
@@ -18,7 +18,7 @@
 	Chart.defaults.scales.time.ticks.color = 'white';
 	Chart.defaults.scales.linear.ticks.color = 'white';
 
-  export let data;
+	export let data;
 
 	const drawerOpen = () => {
 		drawerStore.open();
@@ -27,7 +27,6 @@
 	//TODO add initials component
 	let initials = 'MK';
 	let menu = false;
-
 </script>
 
 <Drawer width="md:w-48" rounded="rounded-2xl">
@@ -54,13 +53,13 @@
 				>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-      {#await Promise.all(Object.values(data.filterOptions))}
-        <p>x</p>
-      {:then ogFilterOptions}
-				<Search {ogFilterOptions} />
-      {:catch error}
-      {JSON.stringify(error)}
-      {/await}
+				{#await Promise.all(Object.values(data.filterOptions))}
+					<p>x</p>
+				{:then ogFilterOptions}
+					<Search {ogFilterOptions} />
+				{:catch error}
+					{JSON.stringify(error)}
+				{/await}
 				<LightSwitch />
 				<div id="avatar-button">
 					<div class="relative inline-block">
@@ -77,9 +76,11 @@
 						/>
 					</div>
 					{#if menu}
-          <div class='relative'>
-            <div class='absolute'>
-						<p>found me</p>
+						<div class="relative">
+							<div class="absolute">
+								<p>found me</p>
+							</div>
+						</div>
 					{/if}
 				</div>
 			</svelte:fragment>
