@@ -14,6 +14,9 @@
 
 	//TODO
 	// put this function on the server
+  // Add auth and then use it to go from login -> load data placeholer page -> home route
+
+
 	async function getMonthlyEventTypeAggs() {
 		const { data: monthlyEventAggs, error } = await data.streamed.monthlyEventTypeAggs;
 		for (let i = 0; i < topTotalEventAggs.length; ++i) {
@@ -43,7 +46,7 @@
 					<div class="card placeholder rounded-container-token animate-pulse h-52 w-72" />
 				{/each}
 			</div>
-			<div class="placeholder card rounded-container-token col-span-3 card p-4 h-[457px] w-[912px]">
+			<div class="placeholder card rounded-container-token animate-pulse col-span-3 card p-4 h-[457px] w-[912px]">
 				<h3 class="ml-3 text-xl">Average Price by Event Date</h3>
 			</div>
 		{:then monthlyEventAggs}

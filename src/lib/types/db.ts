@@ -49,11 +49,11 @@ export interface Database {
           city: string | null
           country: string | null
           created_at: string | null
-          eventDate: string | null
+          eventDate: string
           eventId: number | null
           eventPopularity: number | null
           eventScore: number | null
-          eventType: string | null
+          eventType: string
           highestPrice: number | null
           id: number
           listingCount: number | null
@@ -62,7 +62,7 @@ export interface Database {
           performerIds: number[] | null
           scrapeId: string
           state: string | null
-          title: string | null
+          title: string
           venueCapacity: number | null
           venueId: number | null
           venueName: string | null
@@ -76,11 +76,11 @@ export interface Database {
           city?: string | null
           country?: string | null
           created_at?: string | null
-          eventDate?: string | null
+          eventDate: string
           eventId?: number | null
           eventPopularity?: number | null
           eventScore?: number | null
-          eventType?: string | null
+          eventType?: string
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
@@ -89,7 +89,7 @@ export interface Database {
           performerIds?: number[] | null
           scrapeId: string
           state?: string | null
-          title?: string | null
+          title?: string
           venueCapacity?: number | null
           venueId?: number | null
           venueName?: string | null
@@ -103,11 +103,11 @@ export interface Database {
           city?: string | null
           country?: string | null
           created_at?: string | null
-          eventDate?: string | null
+          eventDate?: string
           eventId?: number | null
           eventPopularity?: number | null
           eventScore?: number | null
-          eventType?: string | null
+          eventType?: string
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
@@ -116,7 +116,7 @@ export interface Database {
           performerIds?: number[] | null
           scrapeId?: string
           state?: string | null
-          title?: string | null
+          title?: string
           venueCapacity?: number | null
           venueId?: number | null
           venueName?: string | null
@@ -206,7 +206,7 @@ export interface Database {
           performerName: string | null
           performerScore: number | null
           performerType: string | null
-          scrapeId: string | null
+          scrapeId: string
           upcomingEventCount: number | null
         }
         Insert: {
@@ -219,7 +219,7 @@ export interface Database {
           performerName?: string | null
           performerScore?: number | null
           performerType?: string | null
-          scrapeId?: string | null
+          scrapeId: string
           upcomingEventCount?: number | null
         }
         Update: {
@@ -232,7 +232,7 @@ export interface Database {
           performerName?: string | null
           performerScore?: number | null
           performerType?: string | null
-          scrapeId?: string | null
+          scrapeId?: string
           upcomingEventCount?: number | null
         }
         Relationships: [
@@ -420,6 +420,12 @@ export interface Database {
         }
         Relationships: []
       }
+      distinct_titles: {
+        Row: {
+          title: string | null
+        }
+        Relationships: []
+      }
       eventgenreaverage: {
         Row: {
           average_score: number | null
@@ -592,7 +598,7 @@ export interface Database {
           performerName: string | null
           performerScore: number | null
           performerType: string | null
-          scrapeId: string | null
+          scrapeId: string
           upcomingEventCount: number | null
         }[]
       }
@@ -631,6 +637,13 @@ export interface Database {
           genre: string
           eventDate: string
           lastMedianPrice: number
+        }[]
+      }
+      get_min_max_event_dates: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          min_date: string
+          max_date: string
         }[]
       }
       get_price_diff_from_last_week: {
@@ -797,11 +810,11 @@ export interface Database {
           city: string | null
           country: string | null
           created_at: string | null
-          eventDate: string | null
+          eventDate: string
           eventId: number | null
           eventPopularity: number | null
           eventScore: number | null
-          eventType: string | null
+          eventType: string
           highestPrice: number | null
           id: number
           listingCount: number | null
@@ -810,7 +823,7 @@ export interface Database {
           performerIds: number[] | null
           scrapeId: string
           state: string | null
-          title: string | null
+          title: string
           venueCapacity: number | null
           venueId: number | null
           venueName: string | null
@@ -827,11 +840,11 @@ export interface Database {
           city: string | null
           country: string | null
           created_at: string | null
-          eventDate: string | null
+          eventDate: string
           eventId: number | null
           eventPopularity: number | null
           eventScore: number | null
-          eventType: string | null
+          eventType: string
           highestPrice: number | null
           id: number
           listingCount: number | null
@@ -840,7 +853,7 @@ export interface Database {
           performerIds: number[] | null
           scrapeId: string
           state: string | null
-          title: string | null
+          title: string
           venueCapacity: number | null
           venueId: number | null
           venueName: string | null

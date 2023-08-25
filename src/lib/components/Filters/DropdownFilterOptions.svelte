@@ -1,13 +1,15 @@
 <script lang="ts">
 	export let label: string;
 	let dropdownVisible = false;
+
+  //on:mouseenter={() => (dropdownVisible = true)}
+	//on:mouseleave={() => (dropdownVisible = false)}
+
 </script>
 
 <div
-	class="flex flex-col w-32"
-	on:mouseenter={() => (dropdownVisible = true)}
-	on:mouseleave={() => (dropdownVisible = false)}
->
+	class="flex flex-col w-fit"
+	>
 	<button
 		class="btn btn-base variant-filled-surface"
 		on:click={() => (dropdownVisible = !dropdownVisible)}>{label}</button

@@ -1,4 +1,6 @@
 // src/routes/+layout.ts
+// 
+/*
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { createSupabaseLoadClient } from '@supabase/auth-helpers-sveltekit'
 import type { Database } from '../DatabaseDefinitions'
@@ -16,13 +18,15 @@ export const load = async ({ fetch, data, depends }) => {
   const {
     data: { session },
   } = await supabase.auth.getSession()
-   const distinctEventTypes = data.distinctEventTypes 
- const distinctStates = data.distinctStates
 
   return {
     supabase,
-    distinctStates,
-    distinctEventTypes,
+    data.distinctTitles,
+    data.distinctEventTypes,
+    data.minMaxDates,
+    data.distinctStates,
     session
   }
 }
+
+*/

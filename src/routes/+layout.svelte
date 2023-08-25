@@ -8,8 +8,8 @@
 	import { page } from '$app/stores';
 	import { Chart } from 'chart.js/auto';
 	import Search from '$lib/components/Filters/Search.svelte';
+  import type { FilterOptions } from '$lib/types/FilterOptions'
 
-	export let data;
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
 	Chart.defaults.plugins.title.color = 'white';
@@ -17,6 +17,9 @@
 	Chart.defaults.plugins.legend.align = 'start';
 	Chart.defaults.scales.time.ticks.color = 'white';
 	Chart.defaults.scales.linear.ticks.color = 'white';
+
+  export let data;
+
 	const drawerOpen = () => {
 		drawerStore.open();
 	};
@@ -25,12 +28,6 @@
 	let initials = 'MK';
 	let menu = false;
 
-	const filterValues = {
-		distinctTitles: data.distinctTitles,
-		distinctTypes: data.distinctEventTypes,
-		minMaxDates: data.minMaxDates,
-		distinctStates: data.distinctStates
-	};
 </script>
 
 <Drawer width="md:w-48" rounded="rounded-2xl">
@@ -57,7 +54,13 @@
 				>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<Search {filterValues} />
+      {#await Promise.all(Object.values(data.filterOptions))}
+        <p>x</p>
+      {:then ogFilterOptions}
+				<Search {ogFilterOptions} />
+      {:catch error}
+      {JSON.stringify(error)}
+      {/await}
 				<LightSwitch />
 				<div id="avatar-button">
 					<div class="relative inline-block">

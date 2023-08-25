@@ -1,43 +1,47 @@
 <script lang="ts">
+  import { slide } from 'svelte/transition'
+  import { Autocomplete, InputChip } from '@skeletonlabs/skeleton';
+  import type { AutocompleteOption } from '@skeletonlabs/skeleton';
 	import { toTitleCase } from '$lib/utilities/utils';
-	import { derived, writable, type Writable } from 'svelte/store';
+  import { titleSearchStore, eventTypeStore, eventsRangeStore, stateStore, eventStore, filterStore } from "$lib/components/Filters/filterStore"
 	import DropdownFilterOptions from './DropdownFilterOptions.svelte';
 	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import FilterIcon from '$lib/icons/FilterIcon.svelte';
-	import type { Database } from '../../../schema';
 
-	export let filterValues;
+	export let ogFilterOptions 
 	let filtersVisible = false;
 
-	//TODO add input store for the eventType store to build out of
-	let titleSearchStore = writable(filterValues.distinctTitles);
-	let eventTypeStore = writable(filterValues.distinctTypes);
-	let eventsRangeStore: Writable<[Date, Date]> = writable([
-		filterValues.min_date,
-		filterValues.max_date
-	]);
-	let stateStore = writable(filterValues.distinctStates);
-	let eventStore: Database['public']['Tables']['sgEvents']['Row'][] = writable([]);
+  let eventTypeSearch = ''
+  let stateSearch = ''
 
-	let filterStore = derived(
-		[titleSearchStore, eventTypeStore, eventsRangeStore, stateStore, eventStore],
-		([$titleSearchStore, $eventTypeStore, $eventsRangeStore, $stateStore, $eventStore]) => {
-			if ($eventStore) {
-				return $eventStore.filter((event: Database['public']['Tables']['sgEvents']['Row']) => {
-					$titleSearchStore.includes(event.title) &&
-						$eventTypeStore.includes(event.eventType) &&
-						$eventsRangeStore[0] <= event.eventDate &&
-						$eventsRangeStore[1] >= event.eventDate &&
-						$stateStore.includes(event.state);
-				});
-			}
-		},
-		eventStore
-	);
+    const filterOptions = {
+    distincttitles: ogFilterOptions[0],
+    distinctEventTypes: ogFilterOptions[1].map( (eventType: string) => ({
+      label: toTitleCase(eventType, "_"),
+      value: eventType
+    })),
+    distinctStates: ogFilterOptions[2].filter( (opt: string) => opt?.includes(stateSearch)),
+    minMaxDates: ogFilterOptions[3]
+  }
+  let inputChip = '';
+  
+  function onEventTypeSelection(event): void {
+	  inputChip  = event.detail.label;
+  }
+
+  const onChipAdd = ({ chipValue })=> {
+    // implement fuzzy search
+  }
+
+  //TODO what am I doing with events??
+	//eventStore
+  //filterStore	
+
 </script>
 
 <div class="flex h-10 gap-4">
 	{#if filtersVisible}
+  <div class='flex h-10 gap-4' transition:slide={{axis: 'x'}} >
 		<DropdownFilterOptions label="Event Title">
 			<div slot="input" class="flex flex-col card p-4">
 				<p>Event Title</p>
@@ -50,35 +54,20 @@
 		</DropdownFilterOptions>
 		<DropdownFilterOptions label="Event Types">
 			<div slot="input" class="flex flex-col card p-4">
-				<input
-					class="input mb-2"
-					type="search"
-					placeholder="Search..."
-					bind:value={$eventTypeStore}
-				/>
-				<select class="select w-48" multiple value={[]}>
-					{#key $eventTypeStore}
-						{#each $eventTypeStore as eventType}
-							{#if eventType.length > 16}
-								<option class="!p-1 w-full" value={eventType} title={toTitleCase(eventType, '_')}
-									>{toTitleCase(eventType, '_').slice(0, 16).concat('...')}</option
-								>
-							{:else}
-								<option class="!p-1 w-full" value={eventType}>{toTitleCase(eventType, '_')}</option>
-							{/if}
-
-							<option class="!p-0" disabled>─────────────────</option>
-						{/each}
-					{/key}
-				</select>
-			</div>
+        <InputChip bind:input={inputChip} bind:value={$eventTypeStore} on:add={onChipAdd} name="chips" />
+	      <Autocomplete
+          class='h-44 overflow-y-auto '
+		      bind:input={inputChip}
+		      options={filterOptions.distinctEventTypes}
+		      on:selection={onEventTypeSelection}
+      	/>
 		</DropdownFilterOptions>
 		<DropdownFilterOptions label="Events Range">
 			<div slot="input" class="flex flex-col card p-4">
 				<p class="ml-2">From</p>
-				<input class="input" title="Events From" type="date" />
+				<input class="input" title="Events From" type="date" bind:value={$eventsRangeStore[0]} />
 				<p class="ml-2 mt-4">To</p>
-				<input class="input" type="date" />
+				<input class="input" type="date" bind:value={$eventsRangeStore[1]} />
 			</div>
 		</DropdownFilterOptions>
 		<DropdownFilterOptions label="State">
@@ -87,16 +76,18 @@
 					class="input mb-2"
 					type="search"
 					placeholder="Search..."
-					bind:value={$eventTypeStore}
+          bind:value={stateSearch}
 				/>
-				<select class="select w-48" multiple value={[]}>
-					{#each filterValues.distinctStates as state}
+				<select class="select w-48" multiple bind:value={$stateStore}>
+					{#each filterOptions.distinctStates as state}
 						<option value={state}>{state}</option>
 					{/each}
 				</select>
 			</div>
 		</DropdownFilterOptions>
+  </div>
 	{/if}
+  <div class='border-l border-surface-700-200-token'/>
 	<button
 		class="btn btn-base h-8 variant-filled-secondary place-self-center"
 		on:click={() => (filtersVisible = !filtersVisible)}><FilterIcon /></button
