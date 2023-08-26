@@ -16,7 +16,6 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     totalEventTypeAggs.sort((a: TTotalAggType, b: TTotalAggType) => b.rank - a.rank)
 
     const monthlyEventTypeAggs = async () => {
-      random_bytes(1024)
       return await locals.supabase.rpc("get_event_type_by_calendar_month", {
         event_type_a: totalEventTypeAggs[0].eventType,
         event_type_b: totalEventTypeAggs[1].eventType,
