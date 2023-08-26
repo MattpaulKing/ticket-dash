@@ -1,4 +1,4 @@
-import { fail } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 
 export const actions = {
   default: async ({ request, url, locals: { supabase } }) => {
@@ -14,7 +14,6 @@ export const actions = {
     if (error) {
       return fail(500, { message: 'Server error. Try again later.', success: false, email })
     }
-
     return {
       message: 'logged in',
       success: true,
@@ -24,6 +23,10 @@ export const actions = {
 
 export const load = async ({ locals }: {locals: App.Locals }) => {
   const session = await locals.getSession()
+  if (session?.expires_at) {
+    console.log(session?.expires_at)
+    throw redirect(300, "/")
+  }
   return {
     session 
   }

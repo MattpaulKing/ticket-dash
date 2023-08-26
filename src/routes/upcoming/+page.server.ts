@@ -3,6 +3,7 @@ export const load = async ({ locals }: {locals: App.Locals}) => {
         return await locals.supabase.rpc("get_announced_last_three_days")
     }
     return {
+      x: 'hi',
         streamed: {
             announcedLastThreeDays: getAnnouncedLastThreeDays(),
         }
