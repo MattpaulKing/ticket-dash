@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
+	import moment from 'moment';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
 	import { htmlLegendPlugin } from '../charts/utils/htmlLegend';
 
@@ -11,6 +12,7 @@
 	let canvasRef: HTMLCanvasElement;
 	const datasets: { label: string; data: { x: string; y: number }[] }[] = [];
 	const labels: string[] = [];
+
 	for (let i = 0; i < groupedEvents.length; ++i) {
 		let dataset: { x: string; y: number }[] = [];
 		for (let j = 0; j < groupedEvents[i].length; ++j) {

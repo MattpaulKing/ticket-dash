@@ -11,7 +11,7 @@
 	let canvasRef: HTMLCanvasElement;
 	const dataset = chartDataTransformer(events, axisKeys);
 	const eventTypeAggs = chartDataTransformer(eventAggs, axisKeys);
-	const stateAggsDS = chartDataTransformer(stateAggs, { x: 'eventDate', y: axisKeys.y });
+	const stateAggsDS = chartDataTransformer(stateAggs, axisKeys);
 	onMount(
 		() =>
 			new Chart(canvasRef, {

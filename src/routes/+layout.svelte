@@ -106,7 +106,7 @@
 					</div>
 				</div>
 				{#if menu}
-					<div class="absolute z-10 w-64 justify-items-center right-3 top-20 card p-4 my-4">
+					<div class="absolute z-50 w-64 justify-items-center right-3 top-20 card p-4 my-4">
 						<section class="flex place-items-center">
 							<Avatar
 								initials="mk"

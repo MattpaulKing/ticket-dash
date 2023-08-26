@@ -8,7 +8,7 @@
 	let canvasRef: HTMLCanvasElement;
 
 	const chartPoints = groupedEvents.map((agg) => ({
-		x: agg[axisKeys.x],
+		x: agg[axisKeys.x] as string,
 		y: agg[axisKeys.y],
 		label: agg.eventType
 	}));
@@ -33,7 +33,8 @@
 							type: 'time',
 							time: {
 								unit: 'month'
-							}
+							},
+							min: new Date().toISOString()
 						},
 						y: {
 							display: false
