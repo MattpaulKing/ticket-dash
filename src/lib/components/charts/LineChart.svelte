@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
-	import addMonths from 'date-fns/addMonths';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
 	export let groupedEvents: TMonthlyAggType[];
 	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
@@ -34,8 +33,7 @@
 							type: 'time',
 							time: {
 								unit: 'month'
-							},
-							max: addMonths(new Date(), 3).toISOString()
+							}
 						},
 						y: {
 							display: false

@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
-	import addMonths from 'date-fns/addMonths';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
 	import { htmlLegendPlugin } from '../charts/utils/htmlLegend';
 
@@ -26,7 +25,6 @@
 		});
 		labels.push(groupedEvents[i][0].eventType.replaceAll('_', ' '));
 	}
-	const xAxisMax = addMonths(new Date(), 3).toISOString();
 
 	//TODO
 	//fix font color
@@ -52,8 +50,7 @@
 								},
 								tooltipFormat: 'yyyy-MMM'
 							},
-							min: new Date().toISOString(),
-							max: xAxisMax
+							min: new Date().toISOString()
 						},
 						y: {
 							display: true
