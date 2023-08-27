@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import EventTable from '$lib/components/EventTable.svelte';
 	import EventMeanLineChart from '$lib/components/charts/EventMeanLineChart.svelte';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils';
+	import { fade } from 'svelte/transition';
 
 	export let data;
 	const yAxisKeys = ['averagePrice', 'highestPrice', 'lowestPrice', 'listingCount'];
@@ -13,6 +15,12 @@
 		score: (data.latestRecord.eventScore / data.stateAggregate.averageScore - 1) * 100,
 		averagePrice: (data.latestRecord.averagePrice / data.stateAggregate.averagePrice - 1) * 100
 	};
+
+	let isWatched = data.watchlistRecord.eventId ? true : false;
+	const handleWatchlist = () => {
+		isWatched = !isWatched;
+	};
+	console.log(data);
 </script>
 
 {#key $page.params.eventId}
@@ -20,13 +28,31 @@
 	<div class="flex flex-col gap-6">
 		<div class="grid grid-cols-[1fr_3fr] gap-6">
 			<div class="card flex flex-col p-4 h-fit">
-				<div class="flex justify-between">
-					<h1 class="mb-4 inline-block">
-						Event Stats vs.
-						<p class="text-tertiary-500 mx-2">{data.latestRecord.state}</p>
-						Average
-					</h1>
-					<button class="btn btn-sm variant-filled-primary h-fit">+ Watchlist</button>
+				<div class="grid grid-cols-[70%_1fr]">
+					<div class="flex flex-col leading-snug w-full">
+						<h1 class="flex">Event Stats</h1>
+						<h1>vs.</h1>
+						<h1 class="text-tertiary-500">
+							{data.latestRecord.state}
+							Average
+						</h1>
+					</div>
+					<div class="grid grid-cols-1 grid-rows-1 h-8 w-[6.3rem]">
+						{#key isWatched}
+							<div class="h-8 col-span-1 row-span-1 w-[6.3rem]">
+								<form method="POST" action={isWatched ? '?/remove' : '?/add'} use:enhance>
+									<input type="hidden" name="sgEventsId" value={data.latestRecord.id} />
+									<button
+										class="btn btn-sm {isWatched
+											? 'variant-filled-primary'
+											: 'variant-filled-secondary'} "
+										transition:fade={{ duration: 300 }}
+										on:click={handleWatchlist}>{isWatched ? '- ' : '+'} Watchlist</button
+									>
+								</form>
+							</div>
+						{/key}
+					</div>
 				</div>
 				<div class="flex gap-4">
 					<h2 class="text-lg capitalize">{data.latestRecord.eventType}</h2>
@@ -73,7 +99,7 @@
 					{#await data.streamed.eventRecords}
 						loading...
 					{:then events}
-						<p>{events.data.length}</p>
+						<p>{events.data?.length}</p>
 					{/await}
 				</div>
 			</div>

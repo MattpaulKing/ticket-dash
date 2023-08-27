@@ -4,9 +4,16 @@
 
 <nav class="list-nav p-2 w-42">
 	<ul>
-		<li><a class={$page.route.id === '/' ? 'bg-surface-500' : ''} href="/">Home</a></li>
+		<li>
+			<a class={$page.route.id === '/' ? 'bg-surface-500/10' : ''} href="/">Home</a>
+		</li>
 		<li>
 			<a class={$page.route.id === '/upcoming' ? 'bg-surface-500' : ''} href="/upcoming">Upcoming</a
+			>
+		</li>
+		<li>
+			<a class={$page.route.id === '/watchlist' ? 'bg-surface-500' : ''} href="/watchlist"
+				>Watchlist</a
 			>
 		</li>
 	</ul>
