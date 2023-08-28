@@ -3,6 +3,7 @@
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
 	import { htmlLegendPlugin } from '../charts/utils/htmlLegend';
+	import { filterStore } from '../Filters/filterStore';
 	import type { Tables } from '$lib/types/db.types';
 
 	export let groupedEvents: Tables<'sgEvents'>[][];
@@ -27,12 +28,13 @@
 		labels.push(groupedEvents[i][0].eventType.replaceAll('_', ' '));
 	}
 
+	let chart: Chart<'line', { x: string; y: number }, 'string'>;
+
 	onMount(
 		() =>
-			new Chart(canvasRef, {
+			(chart = new Chart(canvasRef, {
 				type: 'line',
 				data: {
-					// labels: range of Dates,
 					datasets: datasets,
 					labels: labels
 				},
@@ -66,8 +68,19 @@
 					}
 				},
 				plugins: [htmlLegendPlugin]
-			})
+			}))
 	);
+
+	$: {
+		if (chart) {
+			if ($filterStore.eventType) {
+				chart.data.datasets = chart.data.datasets.filter((dataset) =>
+					$filterStore.eventType?.value.includes(dataset.label)
+				);
+				chart.update();
+			}
+		}
+	}
 </script>
 
 <div class="relative min-h-[350px]">

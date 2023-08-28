@@ -3,27 +3,10 @@ import { error, type Cookies } from '@sveltejs/kit'
 import type { Database } from "$lib/types/db"
 type DateRange = Database["public"]["Functions"]["get_min_max_event_dates"]["Returns"]
 
-export const load = async ({ locals, setHeaders, cookies, isDataRequest }: 
-  { locals: App.Locals, cookies: Cookies, isDataRequest: boolean, setHeaders: (headers: Record<string, string>) => void }) => {
+export const load = async ({ locals }: { locals: App.Locals }) => {
 
-  const initialRequest = !isDataRequest
-  const cacheValue = initialRequest ? +new Date()  : cookies.get("filters-cache")
+  //NOTE: use redis for caching
   
-
-  if (!initialRequest) {
-    const session = await locals.getSession()
-    return {
-      session
-    }
-  } else {
-    //NOTE: can be a security problem, but this is just a number
-    cookies.set("filters-cache", cacheValue, { path: "/", httpOnly: false});
-  }
-  /*
-  setHeaders({
-    "cache-control": "max-age=3600"
-  })
-  */
   const session = await locals.getSession()
   const getDistinctTitles = async () => {
     const { data, error: err } = await locals.supabase.from("distinct_titles").select()
@@ -63,7 +46,6 @@ export const load = async ({ locals, setHeaders, cookies, isDataRequest }:
 
   return {
     session, 
-    cacheBust: cacheValue,
     filterOptions: {
       distinctTitles: getDistinctTitles(),
       distinctEventTypes: getDistinctEventTypes(), 

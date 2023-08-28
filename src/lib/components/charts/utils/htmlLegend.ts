@@ -1,3 +1,8 @@
+import type { Chart } from "chart.js";
+
+type ChartOptionsAndContainerId <T> = Partial<T>
+   & { containerID: string }
+
 const getOrCreateLegendList = (chart, id) => {
   const legendContainer = document.getElementById(id);
   let listContainer = legendContainer.querySelector('ul');
@@ -9,7 +14,7 @@ const getOrCreateLegendList = (chart, id) => {
     listContainer.style.margin = '0';
     listContainer.style.padding = '0';
 
-    legendContainer.appendChild(listContainer);
+    legendContainer?.appendChild(listContainer);
   }
 
   return listContainer;
@@ -17,7 +22,8 @@ const getOrCreateLegendList = (chart, id) => {
 
 export const htmlLegendPlugin = {
   id: 'htmlLegend',
-  afterUpdate(chart, args, options) {
+  //args can be passed into afterUpdate
+  afterUpdate(chart: Chart, args, options) {
     const ul = getOrCreateLegendList(chart, options.containerID);
 
     // Remove old legend items
@@ -43,6 +49,7 @@ export const htmlLegendPlugin = {
           chart.toggleDataVisibility(item.index);
         } else {
           chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
+          //TODO: add the item excluded to the filterStore
         }
         chart.update();
       };

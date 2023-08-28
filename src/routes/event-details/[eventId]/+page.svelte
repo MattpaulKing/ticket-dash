@@ -20,7 +20,7 @@
 	const handleWatchlist = () => {
 		isWatched = !isWatched;
 	};
-	console.log(data);
+	//TODO: make the card a component
 </script>
 
 {#key $page.params.eventId}

@@ -1,24 +1,14 @@
 <script lang="ts">
-	import MeanLineChart from '$lib/components/Charts/MeanLineChart.svelte';
 	import EventTable from '$lib/components/EventTable.svelte';
 	import { filterStore } from '$lib/components/Filters/filterStore';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
 	export let data;
 
-	const totalEventAggs = data.totalEventTypeAggs;
-	const topTotalEventAggs = totalEventAggs.slice(0, 4);
+	const yAxisKeys = ['averagePrice', 'highestPrice', 'lowestPrice', 'listingCount'];
+	let yAxisSelected = 'averagePrice';
 
-	const yAxisKeys = ['meanPrice', 'maxPrice', 'listingCountSum'];
-	let yAxisSelected = 'meanPrice';
-
-	//TODO:
-	//Watchlist page needs improvement
-	//Upcoming pages needs improvement
-	//States page
-	//Data warehousing
-	//Event Types page add ability to get all the events w/ a form action
-	//Do a window function to get the lag and % change
+	const aggData = data.eventTypeTotalAggs[0];
 </script>
 
 <div>
@@ -27,23 +17,19 @@
 		class="container grid grid-cols-5 grid-rows-1 mt-8 gap-6 h-full w-full mx-auto justify-center items-center"
 	>
 		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
-			{#each topTotalEventAggs as agg}
-				{#key $filterStore.eventType}
-					<KpiCard
-						chartData={data.monthlyEventAggs.filter(
-							(monthAgg) => monthAgg.eventType === agg.eventType
-						)}
-						axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
-						aggData={agg}
-						titleAccessor={'eventType'}
-						kpiAccessor={'totalListingCount'}
-					/>
-				{/key}
-			{/each}
+			{#key $filterStore.eventType}
+				<KpiCard
+					chartData={data.eventTypeAggs}
+					axisKeys={{ x: 'created_at', y: 'averagePrice' }}
+					{aggData}
+					titleAccessor={'eventType'}
+					kpiAccessor={'averagePrice'}
+				/>
+			{/key}
 		</div>
 		<div class="col-span-3 card p-4 h-full">
 			<div class="flex h-14">
-				<h1 class=" font-3xl mt-4 ml-4">Average Price by Event Date</h1>
+				<h1 class=" font-3xl mt-4 ml-4">Average Price by Created Date</h1>
 				<form class="z-10 ml-auto p-4">
 					<select class="select w-40" bind:value={yAxisSelected}>
 						{#each yAxisKeys as selector}
@@ -55,16 +41,19 @@
 				</form>
 			</div>
 			<div id="legend-container" />
+			<!--
 			{#key $filterStore.eventType}
 				{#key yAxisSelected}
 					<MeanLineChart
 						groupedEvents={data.splitMonthlyEventAggs}
-						axisKeys={{ x: 'calendarMonth', y: yAxisSelected }}
+						axisKeys={{ x: 'created_at', y: yAxisSelected }}
 					/>
 				{/key}
 			{/key}
+      -->
 		</div>
 	</div>
+	<!--
 	<div class="col-span-5 mt-6">
 		{#await data.streamed.events}
 			loading...
@@ -74,4 +63,5 @@
 			</div>
 		{/await}
 	</div>
+  -->
 </div>

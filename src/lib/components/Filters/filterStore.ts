@@ -2,6 +2,8 @@ import type { Tables } from "$lib/types/db.types";
 import { writable, derived } from "svelte/store";
 import type { Writable } from "svelte/store"
 
+//TODO: rather than have enums for type of filter add a callback that forwards the values to the appropriate function
+
 export const titleStore: Writable<string[]> = writable([])
 export const eventTypeStore: Writable<string[]> = writable([]);
 
@@ -47,7 +49,7 @@ export const filterStore = derived<[
           type: 'gte',
           value: $eventsRangeStore[0]
         }
-      }
+      } //BUG: add conditional logic for if one or both date ranges are set
       if ($eventsRangeStore[1].length) {
         filters.eventDate[1] = {
           type: 'lte',

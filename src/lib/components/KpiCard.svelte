@@ -1,23 +1,25 @@
 <script lang="ts">
-	import type { TMonthlyAggType, TTotalAggType } from '$lib/types/MonthlyEventAggs';
-	import { filterStore } from './Filters/filterStore';
+	import { formatNumber } from '$lib/utilities/utils';
 	import LineChart from './charts/LineChart.svelte';
-	import { setContext } from 'svelte';
-	export let chartData: TMonthlyAggType[];
-	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
-	export let aggData: TTotalAggType;
-	export let titleAccessor: 'eventType';
-	export let kpiAccessor: keyof TTotalAggType;
-
-	setContext('chartContext', {
-		data: chartData
-	});
+	//TODO: fix types
+	export let chartData;
+	export let axisKeys;
+	export let aggData;
+	export let titleAccessor;
+	export let kpiAccessor;
 </script>
 
 <div class="card p-4">
-	<h4 class="text-lg capitalize overflow-hidden whitespace-nowrap">
-		{aggData[titleAccessor].replaceAll('_', ' ')}
-	</h4>
+	<div class="flex justify-between place-items-center">
+		<h4 class="text-lg capitalize overflow-hidden whitespace-nowrap">
+			{aggData[titleAccessor].replaceAll('_', ' ')}
+		</h4>
+		<a href="/eventType/{aggData[titleAccessor]}">
+			<button class="btn btn-sm variant-ringed-surface hover:variant-soft-surface transition-colors"
+				>Details</button
+			>
+		</a>
+	</div>
 	<div class="grid grid-cols-3">
 		<div class="flex col-start-1 col-span-3 place-items-baseline">
 			<p class="mr-2">Listings:</p>
@@ -26,7 +28,7 @@
 					? 'text-success-500'
 					: 'text-error-500'}"
 			>
-				{new Intl.NumberFormat().format(aggData[kpiAccessor])}
+				{formatNumber(aggData[kpiAccessor])}
 			</h3>
 		</div>
 		<LineChart groupedEvents={chartData} {axisKeys} />

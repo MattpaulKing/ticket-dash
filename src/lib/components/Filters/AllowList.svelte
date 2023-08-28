@@ -16,11 +16,19 @@
 	}
 
 	$: optionsFiltered = input ? filterOptions() : listedOptions;
+
+	$: console.log(optionsFiltered);
 </script>
 
 <!-- animate:flip={{ duration }} transition:slide|local={{ duration }} -->
 <div class="min-w-[150px] max-w-[200px] h-40 w-full" data-testid="autocomplete" tabindex="-1">
 	{#if optionsFiltered.length > 0 && search.length > 0}
+		<select multiple bind:value={$store} class="select w-full mt-2 overflow-y-auto">
+			{#each optionsFiltered as option (option)}
+				<option class="w-fit h-8" value={option.value}>{sliceLong(option.label)}</option>
+			{/each}
+		</select>
+	{:else if optionsFiltered.length < 100}
 		<select multiple bind:value={$store} class="select w-full mt-2 overflow-y-auto">
 			{#each [...optionsFiltered] as option (option)}
 				<option class="w-fit h-8" value={option.value}>{sliceLong(option.label)}</option>
