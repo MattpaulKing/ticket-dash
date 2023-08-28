@@ -1,9 +1,9 @@
 <script lang="ts">
 	import MeanLineChart from '$lib/components/Charts/MeanLineChart.svelte';
 	import EventTable from '$lib/components/EventTable.svelte';
+	import { filterStore } from '$lib/components/Filters/filterStore';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
-
 	export let data;
 
 	const totalEventAggs = data.totalEventTypeAggs;
@@ -11,6 +11,8 @@
 
 	const yAxisKeys = ['meanPrice', 'maxPrice', 'listingCountSum'];
 	let yAxisSelected = 'meanPrice';
+
+	$: console.log($filterStore);
 </script>
 
 <div>
@@ -20,15 +22,17 @@
 	>
 		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
 			{#each topTotalEventAggs as agg}
-				<KpiCard
-					chartData={data.monthlyEventAggs.filter(
-						(monthAgg) => monthAgg.eventType === agg.eventType
-					)}
-					axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
-					aggData={agg}
-					titleAccessor={'eventType'}
-					kpiAccessor={'totalListingCount'}
-				/>
+				{#key $filterStore.eventType}
+					<KpiCard
+						chartData={data.monthlyEventAggs.filter(
+							(monthAgg) => monthAgg.eventType === agg.eventType
+						)}
+						axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
+						aggData={agg}
+						titleAccessor={'eventType'}
+						kpiAccessor={'totalListingCount'}
+					/>
+				{/key}
 			{/each}
 		</div>
 		<div class="col-span-3 card p-4 h-full">

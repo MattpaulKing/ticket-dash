@@ -1,34 +1,65 @@
+import type { Tables } from "$lib/types/db.types";
 import { writable, derived } from "svelte/store";
-import { parse } from "date-fns"
 import type { Writable } from "svelte/store"
-import type { Database } from "$lib/types/db"
 
-type FilterValuesProp = never | string[]
-type FilterValuesPropNullable = never | (string | null)[]
-type FilteredRows = never | Database['public']['Tables']['sgEvents']['Row'][]
+export const titleStore: Writable<string[]> = writable([])
+export const eventTypeStore: Writable<string[]> = writable([]);
 
-export const titleSearchStore: Writable<FilterValuesProp> = writable()
-export const eventTypeStore: Writable<FilterValuesProp> = writable([]);
-export const eventsRangeStore: Writable<[Date, Date]> = writable([
-  new Date(2021, 1, 1),
-  new Date(2029, 1, 1), 
+// Better to store the dates as strings because store receives dates from input
+// input has to be type string
+// DB also expects strings
+export const eventsRangeStore: Writable<[string, string]> = writable([
+  new Date().toISOString(),
+  new Date(2029, 1, 1).toISOString(), 
 ])
-export const stateStore: Writable<FilterValuesPropNullable> = writable([]);
-export const eventStore: Writable<FilteredRows> = writable([]);
+export const stateStore: Writable<string[]> = writable([]);
+export const eventStore: Writable<string[]> = writable([]);
 
+export type Filter = {
+  type: string,
+  value: string | string[] | [string, string] 
+}
+export type Filters = Partial<Record<keyof Tables<"sgEvents">, Filter>>
 
-export const filterStore = derived(
-		[titleSearchStore, eventTypeStore, eventsRangeStore, stateStore, eventStore],
-		([$titleSearchStore, $eventTypeStore, $eventsRangeStore, $stateStore, $eventStore]) => {
-			if ($eventStore) {
-				return $eventStore.filter((event: Database['public']['Tables']['sgEvents']['Row']) => {
-					$titleSearchStore.includes(event.title) &&
-						$eventTypeStore.includes(event.eventType) &&
-						$eventsRangeStore[0] <= parse(event.eventDate, 'yyyy-mm-dd', new Date()) &&
-						$eventsRangeStore[1] >= parse(event.eventDate, 'yyyy-mm-dd', new Date()) &&
-						$stateStore.includes(event.state);
-				});
-			}
+export const filterStore = derived<[
+  typeof titleStore, 
+  typeof eventTypeStore, 
+  typeof eventsRangeStore, 
+  typeof stateStore
+], Filters>(
+		[titleStore, eventTypeStore, eventsRangeStore, stateStore],
+		([$titleSearchStore, $eventTypeStore, $eventsRangeStore, $stateStore]) => {
+      const filters: Filters = {}
+      if ($titleSearchStore.length) {
+        filters.title = {
+          type: 'in', 
+          value: $titleSearchStore
+        }
+      }
+      if ($eventTypeStore.length) {
+        filters.eventType = {
+          type: 'in',
+          value: $eventTypeStore
+        }
+      }
+      if ($eventsRangeStore[0].length) {
+        filters.eventDate = {
+          type: 'gte',
+          value: $eventsRangeStore[0]
+        }
+      }
+      if ($eventsRangeStore[1].length) {
+        filters.eventDate[1] = {
+          type: 'lte',
+          value: $eventsRangeStore[1]
+        }
+      }
+      if ($stateStore.length) {
+        filters.state = {
+          type: 'in',
+          value: $stateStore
+        }
+      }
+      return filters
 		},
-		eventStore
 	)

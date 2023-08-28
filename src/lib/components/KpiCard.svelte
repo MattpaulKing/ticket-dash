@@ -1,11 +1,17 @@
 <script lang="ts">
 	import type { TMonthlyAggType, TTotalAggType } from '$lib/types/MonthlyEventAggs';
+	import { filterStore } from './Filters/filterStore';
 	import LineChart from './charts/LineChart.svelte';
+	import { setContext } from 'svelte';
 	export let chartData: TMonthlyAggType[];
 	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
 	export let aggData: TTotalAggType;
 	export let titleAccessor: 'eventType';
 	export let kpiAccessor: keyof TTotalAggType;
+
+	setContext('chartContext', {
+		data: chartData
+	});
 </script>
 
 <div class="card p-4">

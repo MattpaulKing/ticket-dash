@@ -36,6 +36,14 @@ export function indexOfFirstUppercase(str: string) {
     return -1
 }
 
+export function sliceLong(str: string) {
+  if (str.length > 17) {
+    return str.slice(0,13).concat("...")
+  } else {
+    return str
+  }
+}
+
 export const getComparisonAveragePrice = (a) => {
  return ((a.medianPrice - a.comparisonAveragePrice) / a.comparisonAveragePrice) * 100
 }

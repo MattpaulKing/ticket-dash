@@ -7,7 +7,7 @@ declare const __propDef: {
         /** Set a unique select input name.*/
         name: string;
         /** An array of values.*/
-        value?: any[] | undefined;
+        value?: string[] | undefined;
         /** Provide a whitelist of accepted values.*/
         whitelist?: string[] | undefined;
         /** Maximum number of chips. Set -1 to disable.*/
@@ -21,7 +21,7 @@ declare const __propDef: {
         /** When enabled, allows for duplicate values.*/
         allowDuplicates?: boolean | undefined;
         /** Provide a custom validator function.*/
-        validation?: ((...args: any[]) => boolean) | undefined;
+        validation?: ((...args: string[]) => boolean) | undefined;
         /** The duration of the animated fly effect.*/
         duration?: number | undefined;
         /** Set the required state for this input field.*/

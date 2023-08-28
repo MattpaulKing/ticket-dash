@@ -1,5 +1,5 @@
 import type { Functions } from "$lib/types/db.types";
-import { error as svelteError } from "@sveltejs/kit";
+import { error as svelteError, type Actions } from "@sveltejs/kit";
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
 

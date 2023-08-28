@@ -1,4 +1,5 @@
 <script lang="ts">
+	import moment from 'moment';
 	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 	import '../app.postcss';
@@ -16,8 +17,8 @@
 	import { Chart } from 'chart.js/auto';
 	import Search from '$lib/components/Filters/Search.svelte';
 	import SignOut from '$lib/icons/SignOut.svelte';
-	import { afterNavigate, beforeNavigate } from '$app/navigation';
-	import { derived, writable } from 'svelte/store';
+	import { afterNavigate } from '$app/navigation';
+	import { writable } from 'svelte/store';
 
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';

@@ -1,108 +1,147 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	import { createEventDispatcher } from 'svelte';
-	import { Autocomplete } from '@skeletonlabs/skeleton';
 	import { toTitleCase } from '$lib/utilities/utils';
 	import FzfInputChip from './FzfInputChip.svelte';
+	import AllowList from './AllowList.svelte';
 	import {
-		titleSearchStore,
+		titleStore,
 		eventTypeStore,
 		eventsRangeStore,
 		stateStore,
-		eventStore,
 		filterStore
 	} from '$lib/components/Filters/filterStore';
 	import DropdownFilterOptions from './DropdownFilterOptions.svelte';
-	import SearchIcon from '$lib/icons/SearchIcon.svelte';
 	import FilterIcon from '$lib/icons/FilterIcon.svelte';
+	import { readable } from 'svelte/store';
+	import Page from '../../../routes/+page.svelte';
+	export let ogFilterOptions: [string[], string[], string[], [Date, Date]];
 
-	export let ogFilterOptions;
 	let filtersVisible = false;
+	let titleInput = '';
+	let eventTypeInput = '';
+	let stateInput = '';
 
-	let stateSearch = '';
-
-	const filterOptions = {
-		distincttitles: ogFilterOptions[0],
+	const filterOptions = readable({
+		distinctTitles: ogFilterOptions[0].map((title: string) => ({
+			label: title,
+			value: title
+		})),
 		distinctEventTypes: ogFilterOptions[1].map((eventType: string) => ({
 			label: toTitleCase(eventType, '_'),
 			value: eventType
 		})),
-		distinctStates: ogFilterOptions[2].filter((opt: string) => opt?.includes(stateSearch)),
-		minMaxDates: ogFilterOptions[3]
-	};
-	let inputChip = '';
-	/*
-	function onEventTypeSelection(event: Event): void {
-		inputChip = event.detail.label;
-		dispatch('add', {
-			event,
-			chipIndex: $eventTypeStore.length - 1,
-			chipValue: event.detail.label
-		});
-	}
-  */
+		distinctStates: ogFilterOptions[2].map((state: string) => ({
+			label: state,
+			value: state
+		})),
+		dates: {
+			min: ogFilterOptions[3][0].toISOString(),
+			max: ogFilterOptions[3][1].toISOString()
+		}
+	});
 
-	//TODO slim down input chip fork and implement ability to send selection event to it from the autocomplete
-	//add the same functionality to state filter
+	function handleSubmit(e) {
+		console.log(e);
+	}
 </script>
 
-<div class="flex h-10 gap-4">
+<form class="flex h-10 gap-4" method="GET" action="?filters">
 	{#if filtersVisible}
 		<div class="flex h-10 gap-4" transition:slide={{ axis: 'x' }}>
 			<DropdownFilterOptions label="Event Title">
-				<div slot="input" class="flex flex-col card p-4">
-					<p>Event Title</p>
-					<div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-						<div class="input-group-shim w-6"><SearchIcon /></div>
-						<input type="search" placeholder="Search..." bind:value={$titleSearchStore} />
-						<button class="variant-filled-secondary">Submit</button>
-					</div>
+				<!-- Event Title -->
+				<div slot="input" class="flex flex-col card w-60 p-4">
+					<FzfInputChip
+						bind:input={titleInput}
+						bind:value={$titleStore}
+						searchCol="title"
+						searchType="in"
+						name="chips"
+						fzfwhitelist={ogFilterOptions[0]}
+					/>
+					<AllowList
+						bind:input={titleInput}
+						options={$filterOptions.distinctTitles}
+						search={titleInput}
+						store={titleStore}
+					/>
 				</div>
 			</DropdownFilterOptions>
 			<DropdownFilterOptions label="Event Types">
+				<!-- Event Types -->
 				<div slot="input" class="flex flex-col card p-4">
 					<FzfInputChip
-						bind:input={inputChip}
+						bind:input={eventTypeInput}
 						bind:value={$eventTypeStore}
+						searchCol="eventType"
+						searchType="in"
 						name="chips"
 						fzfwhitelist={ogFilterOptions[1]}
 					/>
-					<Autocomplete
-						class="h-44 overflow-y-auto"
-						tabindex="-1"
-						bind:input={inputChip}
-						options={filterOptions.distinctEventTypes}
+					<AllowList
+						bind:input={eventTypeInput}
+						options={$filterOptions.distinctEventTypes}
+						search={eventTypeInput}
+						store={eventTypeStore}
 					/>
-				</div></DropdownFilterOptions
-			>
+				</div>
+			</DropdownFilterOptions>
 			<DropdownFilterOptions label="Events Range">
+				<!-- Event Dates in Range -->
 				<div slot="input" class="flex flex-col card p-4">
 					<p class="ml-2">From</p>
-					<input class="input" title="Events From" type="date" bind:value={$eventsRangeStore[0]} />
+					<input
+						class="input"
+						title="Events From"
+						name="dateFrom"
+						type="date"
+						min={$filterOptions.dates.min}
+						max={$filterOptions.dates.max}
+						bind:value={$eventsRangeStore[0]}
+					/>
 					<p class="ml-2 mt-4">To</p>
-					<input class="input" type="date" bind:value={$eventsRangeStore[1]} />
+					<input
+						class="input"
+						type="date"
+						name="dateTo"
+						min={$filterOptions.dates.min}
+						max={$filterOptions.dates.max}
+						bind:value={$eventsRangeStore[1]}
+					/>
 				</div>
 			</DropdownFilterOptions>
 			<DropdownFilterOptions label="State">
+				<!-- States -->
 				<div slot="input" class="flex flex-col card p-4">
-					<input
-						class="input mb-2"
-						type="search"
-						placeholder="Search..."
-						bind:value={stateSearch}
+					<FzfInputChip
+						bind:input={stateInput}
+						bind:value={$stateStore}
+						searchCol="state"
+						searchType="in"
+						name="chips"
+						fzfwhitelist={ogFilterOptions[2]}
 					/>
-					<select class="select w-48" multiple bind:value={$stateStore}>
-						{#each filterOptions.distinctStates as state}
-							<option value={state}>{state}</option>
-						{/each}
-					</select>
+					<AllowList
+						bind:input={stateInput}
+						options={$filterOptions.distinctStates}
+						search={stateInput}
+						store={stateStore}
+					/>
 				</div>
 			</DropdownFilterOptions>
 		</div>
 	{/if}
 	<div class="border-l border-surface-700-200-token" />
-	<button
-		class="btn btn-base h-8 variant-filled-secondary place-self-center"
-		on:click={() => (filtersVisible = !filtersVisible)}><FilterIcon /></button
-	>
-</div>
+	{#if filtersVisible}
+		<button
+			type="submit"
+			class="btn btn-base h-8 variant-filled-secondary"
+			on:click|self={() => (filtersVisible = !filtersVisible)}><FilterIcon /></button
+		>
+	{:else}
+		<button
+			class="btn btn-base h-8 variant-filled-secondary"
+			on:click={() => (filtersVisible = !filtersVisible)}><FilterIcon /></button
+		>
+	{/if}
+</form>

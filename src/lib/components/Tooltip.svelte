@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
 	import { fly } from 'svelte/transition';
 	export let text = '';
 	let isHovered = false;
@@ -19,13 +18,12 @@
 
 <div class="relative">
 	<div
-		class="bg-red-500 w-6 h-6 z-50 absolute"
+		class=" w-6 h-6 z-50 -left-1/2 absolute"
 		on:mouseenter={mouseOver}
 		on:mouseleave={mouseLeave}
 		on:focus={focused}
-	>
-		<slot />
-	</div>
+	/>
+	<slot />
 </div>
 
 {#if isHovered}

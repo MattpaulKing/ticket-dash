@@ -2,18 +2,32 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
+	import { getContext } from 'svelte';
+	import { filterStore } from '../Filters/filterStore';
 	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
 	export let groupedEvents: TMonthlyAggType[];
 	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
 	let canvasRef: HTMLCanvasElement;
 
-	const chartPoints = groupedEvents.map((agg) => ({
+	let chartPoints = groupedEvents.map((agg) => ({
 		x: agg[axisKeys.x] as string,
 		y: agg[axisKeys.y],
 		label: agg.eventType
 	}));
 
-	const donutChart = onMount(
+	$: {
+		if ($filterStore.eventType?.value) {
+			chartPoints = groupedEvents
+				.filter((agg) => $filterStore.eventType?.value.includes(agg.eventType))
+				.map((agg) => ({
+					x: agg[axisKeys.x] as string,
+					y: agg[axisKeys.y],
+					label: agg.eventType
+				}));
+		}
+	}
+
+	onMount(
 		() =>
 			new Chart(canvasRef, {
 				type: 'line',

@@ -2,12 +2,11 @@
 	import { onMount } from 'svelte';
 	import { Chart } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
-	import moment from 'moment';
-	import type { TMonthlyAggType } from '$lib/types/MonthlyEventAggs';
 	import { htmlLegendPlugin } from '../charts/utils/htmlLegend';
+	import type { Tables } from '$lib/types/db.types';
 
-	export let groupedEvents: TMonthlyAggType[][];
-	export let axisKeys: { x: keyof TMonthlyAggType; y: keyof TMonthlyAggType };
+	export let groupedEvents: Tables<'sgEvents'>[][];
+	export let axisKeys: { x: keyof Tables<'sgEvents'>; y: keyof Tables<'sgEvents'> };
 
 	let canvasRef: HTMLCanvasElement;
 	const datasets: { label: string; data: { x: string; y: number }[] }[] = [];
@@ -28,11 +27,7 @@
 		labels.push(groupedEvents[i][0].eventType.replaceAll('_', ' '));
 	}
 
-	//TODO
-	//fix font color
-	//add title
-
-	const donutChart = onMount(
+	onMount(
 		() =>
 			new Chart(canvasRef, {
 				type: 'line',
@@ -67,13 +62,6 @@
 						},
 						legend: {
 							display: false
-							//position: 'top',
-							//labels: {
-							//	color: 'white',
-							//	boxWidth: 10
-							//filter: (item, data) => (item.index ? item.index < 3 : true),
-							//sort: (a, b) => (a.index ? (b.index ? a.index - b.index : 1) : 1)
-							//}
 						}
 					}
 				},

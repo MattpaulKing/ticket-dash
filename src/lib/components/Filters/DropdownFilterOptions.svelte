@@ -1,24 +1,20 @@
 <script lang="ts">
 	export let label: string;
-	let dropdownVisible = false;
-
-  //on:mouseenter={() => (dropdownVisible = true)}
-	//on:mouseleave={() => (dropdownVisible = false)}
-
+	let dropdown = false;
 </script>
 
-<div
-	class="flex flex-col w-fit"
-	>
+<div class="flex flex-col w-fit">
 	<button
+		type="button"
 		class="btn btn-base variant-filled-surface"
-		on:click={() => (dropdownVisible = !dropdownVisible)}>{label}</button
+		on:click|self={() => (dropdown = !dropdown)}>{label}</button
 	>
-	{#if dropdownVisible}
-		<div class="relative">
+	{#if dropdown}
+		<div class="relative mt-5">
 			<div class="absolute z-50 card">
 				<slot name="input" />
 			</div>
 		</div>
 	{/if}
 </div>
+<slot name="value list" />

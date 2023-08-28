@@ -50,7 +50,9 @@ export const load = async ({ locals, params }: { locals: App.Locals, params: {ev
     const session = await locals.getSession()
     const {data: watchlistRecord, error: watchlistErr} = await locals.supabase.from('Watchlist').select("eventId").eq('eventId', params.eventId).eq('userId', session?.user.id).limit(1).single()
     if (watchlistErr) {
-      throw error(500, "Could not access watchlist, please try again")
+      if (watchlistErr.code !== 'PGRST116') {
+        throw error(500, "Could not access watchlist, please try again")
+      }
     }
 
     const streamedEventTypeDetails = async () => {
