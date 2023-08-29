@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Chart } from 'chart.js/auto';
+	import { Chart, type ChartComponent } from 'chart.js/auto';
 	import 'chartjs-adapter-date-fns';
 	import { filterStore } from '../Filters/filterStore';
+	import { onDestroy } from 'svelte';
 	export let groupedEvents;
 	export let axisKeys;
 	let canvasRef: HTMLCanvasElement;
@@ -13,59 +14,68 @@
 		label: agg.eventType
 	}));
 
+	const id = chartPoints[0].label.concat(`-${Math.random()}`);
+
 	$: {
 		if ($filterStore.eventType?.value) {
 			chartPoints = groupedEvents
 				.filter((agg) => $filterStore.eventType?.value.includes(agg.eventType))
 				.map((agg) => ({
-					x: agg[axisKeys.x] as string,
+					x: agg[axisKeys.x],
 					y: agg[axisKeys.y],
 					label: agg.eventType
 				}));
 		}
 	}
 
-	onMount(
-		() =>
-			new Chart(canvasRef, {
-				type: 'line',
-				data: {
-					datasets: [
-						{
-							data: chartPoints
-						}
-					]
-				},
-				options: {
-					scales: {
-						x: {
-							display: true,
-							type: 'time',
-							time: {
-								unit: 'month'
-							},
-							min: new Date().toISOString()
+	let chart;
+
+	onMount(() => {
+		chart = new Chart(canvasRef, {
+			type: 'line',
+			data: {
+				datasets: [
+					{
+						data: chartPoints
+					}
+				]
+			},
+			options: {
+				scales: {
+					x: {
+						display: false,
+						type: 'time',
+						time: {
+							unit: 'month'
 						},
-						y: {
-							display: true
-						}
+						min: new Date().toISOString()
 					},
-					maintainAspectRatio: true,
-					aspectRatio: 2,
-					plugins: {
-						legend: {
-							display: false,
-							position: 'left',
-							labels: {
-								boxWidth: 10,
-								filter: (item) => (item.index ? item.index < 3 : true),
-								sort: (a, b) => (a.index ? (b.index ? a.index - b.index : 1) : 1)
-							}
+					y: {
+						display: false
+					}
+				},
+				maintainAspectRatio: true,
+				aspectRatio: 2,
+				plugins: {
+					legend: {
+						display: false
+						/*
+						position: 'left',
+						labels: {
+							boxWidth: 10,
+							filter: (item) => (item.index ? item.index < 3 : true),
+							sort: (a, b) => (a.index ? (b.index ? a.index - b.index : 1) : 1)
 						}
+             */
+					},
+					decimation: {
+						enabled: true,
+						algorithm: 'lttb'
 					}
 				}
-			})
-	);
+			}
+		}).update();
+	});
 </script>
 
-<canvas bind:this={canvasRef} />
+<canvas id="line-chart-{id}" bind:this={canvasRef} />

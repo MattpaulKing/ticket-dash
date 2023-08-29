@@ -14,7 +14,6 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     if (totalEventTypeAggsError) {
         throw svelteError(500, totalEventTypeAggsError)
     }
-    totalEventTypeAggs.sort((a, b) => b.rank - a.rank)
 
     const splitMonthlyEventAggs = []
 		const { data: monthlyEventAggs, error } = await locals.supabase.rpc("get_event_type_by_calendar_month", {

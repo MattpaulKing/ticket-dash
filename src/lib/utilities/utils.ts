@@ -62,8 +62,25 @@ export function formatNumber(num: number, precision = 2) {
   if (found) {
     const formatted = (num / found.threshold).toFixed(precision) + found.suffix;
     return formatted;
-  }
-
-  return num;
+  } 
+  return num.toFixed(3)
 }
 
+export function camelCaseToFormatted(textArg: string) {
+  const result = textArg.replace(/([A-Z])/g, " $1");
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
+
+export function camel2title(camelCase: string) {
+  // no side-effects
+  return camelCase
+    // inject space before the upper case letters
+    .replace(/([A-Z])/g, function(match) {
+       return " " + match;
+    })
+    // replace first char with upper case
+    .replace(/^./, function(match) {
+      return match.toUpperCase();
+    });
+}

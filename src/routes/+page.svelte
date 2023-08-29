@@ -13,12 +13,13 @@
 	let yAxisSelected = 'meanPrice';
 
 	//TODO:
-	//Watchlist page needs improvement
-	//Upcoming pages needs improvement
-	//States page
+	//Home page's total listings should show the volume of sales i.e. changes in listingCount
+	//Watchlist page needs improvement - add a "dashboard"
+	//Upcoming pages needs improvement - - add a "dashboard"
+	//TODO:
+	//Replace the table on the home page with a bar chart of scores and coloured by their types
+	//The listings charts don't really show anything, because they're done by event date - recreate with created_at instead
 	//Data warehousing
-	//Event Types page add ability to get all the events w/ a form action
-	//Do a window function to get the lag and % change
 </script>
 
 <div>

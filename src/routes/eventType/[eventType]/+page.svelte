@@ -1,67 +1,108 @@
 <script lang="ts">
-	import EventTable from '$lib/components/EventTable.svelte';
-	import { filterStore } from '$lib/components/Filters/filterStore';
-	import KpiCard from '$lib/components/KpiCard.svelte';
-	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
+	import { formatNumber, camel2title } from '$lib/utilities/utils.js';
+	import { page } from '$app/stores';
+	import { Line } from 'svelte-chartjs';
+	import 'chartjs-adapter-date-fns';
+	import {
+		Chart as ChartJS,
+		Title,
+		Legend,
+		LineElement,
+		LinearScale,
+		PointElement,
+		CategoryScale,
+		TimeScale,
+		type ChartConfiguration,
+		type DefaultDataPoint
+	} from 'chart.js';
 	export let data;
 
-	const yAxisKeys = ['averagePrice', 'highestPrice', 'lowestPrice', 'listingCount'];
-	let yAxisSelected = 'averagePrice';
+	ChartJS.register(Title, Legend, LineElement, LinearScale, PointElement, CategoryScale, TimeScale);
 
-	const aggData = data.eventTypeTotalAggs[0];
+	type AxisAccessors = {
+		x: string;
+		y: string;
+	};
+
+	function transformDatasetData(data: any[], axisKeys: AxisAccessors) {
+		return data.map((record) => ({
+			x: record[axisKeys.x],
+			y: record[axisKeys.y]
+		}));
+	}
+
+	const aggOptions = ['averagePrice', 'highestPrice', 'eventScore', 'eventPopularity'];
+	const datasetData = [];
+	for (let i = 0; i < aggOptions.length; ++i) {
+		datasetData.push({
+			//label: camel2title(aggOptions[i]),
+			data: transformDatasetData(data.eventTypeAggs, { x: 'created_at', y: aggOptions[i] })
+		});
+	}
+
+	//brewer.RdYlGn5
+
+	const options: ChartConfiguration<'line', DefaultDataPoint<'line'>, unknown> = {
+		scales: {
+			x: {
+				display: false,
+				type: 'time',
+				time: {
+					unit: 'month',
+					displayFormats: {
+						month: 'yyyy-MMM'
+					},
+					tooltipFormat: 'yyyy-MMM'
+				}
+			},
+			y: {
+				display: false
+			}
+		},
+		plugins: {
+			legend: {
+				display: false
+			}
+		}
+	};
 </script>
 
 <div>
-	<h1 class="h1">Event Types</h1>
+	<h1 class="h1">{$page.params.eventType}</h1>
 	<div
 		class="container grid grid-cols-5 grid-rows-1 mt-8 gap-6 h-full w-full mx-auto justify-center items-center"
 	>
 		<div class="col-span-2 grid grid-rows-2 grid-cols-2 gap-6 h-full">
-			{#key $filterStore.eventType}
-				<KpiCard
-					chartData={data.eventTypeAggs}
-					axisKeys={{ x: 'created_at', y: 'averagePrice' }}
-					{aggData}
-					titleAccessor={'eventType'}
-					kpiAccessor={'averagePrice'}
-				/>
-			{/key}
-		</div>
-		<div class="col-span-3 card p-4 h-full">
-			<div class="flex h-14">
-				<h1 class=" font-3xl mt-4 ml-4">Average Price by Created Date</h1>
-				<form class="z-10 ml-auto p-4">
-					<select class="select w-40" bind:value={yAxisSelected}>
-						{#each yAxisKeys as selector}
-							<option class="capitalize" value={selector}>
-								{selector.slice(0, indexOfFirstUppercase(selector))}
-							</option>
-						{/each}
-					</select>
-				</form>
-			</div>
-			<div id="legend-container" />
-			<!--
-			{#key $filterStore.eventType}
-				{#key yAxisSelected}
-					<MeanLineChart
-						groupedEvents={data.splitMonthlyEventAggs}
-						axisKeys={{ x: 'created_at', y: yAxisSelected }}
-					/>
-				{/key}
-			{/key}
-      -->
+			{#each aggOptions as agg, i}
+				<!-- Filter Options go as a key here -->
+				<div class="card p-4">
+					<div class="flex justify-between place-items-center">
+						<h4 class="text-lg capitalize overflow-hidden whitespace-nowrap">
+							{camel2title(agg)}
+						</h4>
+						<!--TODO: add pages for the seeing agg values for various types of events -->
+						<a href="/eventType/">
+							<button
+								class="btn btn-sm variant-ringed-surface hover:variant-soft-surface transition-colors"
+								>Details</button
+							>
+						</a>
+					</div>
+					<div class="grid grid-cols-3">
+						<div class="flex col-start-1 col-span-3 place-items-baseline">
+							<p class="mr-2">Listings:</p>
+							<h3
+								class="text-xl col-start-3 justify-self-end {data.eventTypeTotalAggs[0][agg] > 0
+									? 'text-success-500'
+									: 'text-error-500'}"
+							>
+								{formatNumber(data.eventTypeTotalAggs[0][agg])}
+							</h3>
+						</div>
+						<Line data={{ datasets: [datasetData[i]] }} {options} />
+					</div>
+				</div>
+			{/each}
 		</div>
 	</div>
-	<!--
-	<div class="col-span-5 mt-6">
-		{#await data.streamed.events}
-			loading...
-		{:then events}
-			<div class="mt-4">
-				<EventTable events={events.data} />
-			</div>
-		{/await}
-	</div>
-  -->
 </div>

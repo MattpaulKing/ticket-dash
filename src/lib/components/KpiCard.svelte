@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { formatNumber } from '$lib/utilities/utils';
+	import { onDestroy } from 'svelte';
 	import LineChart from './charts/LineChart.svelte';
 	//TODO: fix types
+	//TODO: redo in svelte-chartjs
 	export let chartData;
 	export let axisKeys;
 	export let aggData;
