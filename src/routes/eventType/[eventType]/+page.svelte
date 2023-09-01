@@ -15,6 +15,7 @@
 		type ChartConfiguration,
 		type DefaultDataPoint
 	} from 'chart.js';
+	import type { AnyObject } from 'chart.js/dist/types/basic.js';
 	export let data;
 
 	ChartJS.register(Title, Legend, LineElement, LinearScale, PointElement, CategoryScale, TimeScale);
@@ -40,9 +41,7 @@
 		});
 	}
 
-	//brewer.RdYlGn5
-
-	const options: ChartConfiguration<'line', DefaultDataPoint<'line'>, unknown> = {
+	const options: ChartConfiguration<'line', DefaultDataPoint<'line'>, unknown>['options'] = {
 		scales: {
 			x: {
 				display: false,
@@ -80,7 +79,6 @@
 						<h4 class="text-lg capitalize overflow-hidden whitespace-nowrap">
 							{camel2title(agg)}
 						</h4>
-						<!--TODO: add pages for the seeing agg values for various types of events -->
 						<a href="/eventType/">
 							<button
 								class="btn btn-sm variant-ringed-surface hover:variant-soft-surface transition-colors"

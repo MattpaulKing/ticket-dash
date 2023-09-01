@@ -1,40 +1,5 @@
 import { error, type Actions, fail } from "@sveltejs/kit";
 
-export const actions = {
-
-  add: async ({ request, params, locals }) => {
-    const data = await request.formData()
-    const session  = await locals.getSession()
-    const { error: err } = await locals.supabase.from("Watchlist").insert({
-      eventId: params.eventId,
-      sgEventsId: data.get('sgEventsId'),
-      userId: session?.user.id
-    })
-    if (err) {
-      return fail(400, {
-        message: "Please try again."
-      })
-    }
-
-    return { success: true }
-  },
-
-  remove: async ({ request, params, locals }) => {
-    const data = await request.formData()
-    const { error: err } = await locals.supabase.from("Watchlist")
-      .delete()
-      .eq('eventId', params.eventId)
-      .eq('sgEventsUpcomingId', data.get('sgEventsId'))
-
-    if (err) {
-      return fail(400, {
-        message: "Please try again."
-      })
-    }
-
-    return { success: true }
-  },
-} satisfies Actions
 
 export const load = async ({ locals, params }: { locals: App.Locals, params: {eventId: number}}) => {
 

@@ -1,12 +1,10 @@
 import { parse } from 'date-fns'
-import { error, type Cookies } from '@sveltejs/kit'
+import { error, type Cookies, type Actions, fail } from '@sveltejs/kit'
 import type { Database } from "$lib/types/db"
 type DateRange = Database["public"]["Functions"]["get_min_max_event_dates"]["Returns"]
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
 
-  //NOTE: use redis for caching
-  
   const session = await locals.getSession()
   const getDistinctTitles = async () => {
     const { data, error: err } = await locals.supabase.from("distinct_titles").select()

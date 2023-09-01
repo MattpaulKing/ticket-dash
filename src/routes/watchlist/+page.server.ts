@@ -1,4 +1,6 @@
-import { error } from "@sveltejs/kit"
+import { error, fail, type Actions } from "@sveltejs/kit"
+
+
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
 

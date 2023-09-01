@@ -126,72 +126,171 @@ export interface Database {
         }
         Relationships: []
       }
-      sgEventsDB: {
+      sgEventsPast: {
         Row: {
           announceDate: string | null
           averagePrice: number | null
+          city: string | null
+          country: string | null
           created_at: string | null
-          description: string | null
+          eventDate: string
+          eventId: number | null
+          eventPopularity: number | null
+          eventScore: number | null
+          eventType: string
+          highestPrice: number | null
+          id: number
+          listingCount: number | null
+          lowestPrice: number | null
+          medianPrice: number | null
+          performerIds: number[] | null
+          scrapeId: string
+          state: string | null
+          title: string
+          venueCapacity: number | null
+          venueId: number | null
+          venueName: string | null
+          venuePopularity: number | null
+          venueScore: number | null
+          venueUpcomingEventCount: number | null
+        }
+        Insert: {
+          announceDate?: string | null
+          averagePrice?: number | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          eventDate: string
+          eventId?: number | null
+          eventPopularity?: number | null
+          eventScore?: number | null
+          eventType?: string
+          highestPrice?: number | null
+          id?: number
+          listingCount?: number | null
+          lowestPrice?: number | null
+          medianPrice?: number | null
+          performerIds?: number[] | null
+          scrapeId: string
+          state?: string | null
+          title?: string
+          venueCapacity?: number | null
+          venueId?: number | null
+          venueName?: string | null
+          venuePopularity?: number | null
+          venueScore?: number | null
+          venueUpcomingEventCount?: number | null
+        }
+        Update: {
+          announceDate?: string | null
+          averagePrice?: number | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          eventDate?: string
+          eventId?: number | null
+          eventPopularity?: number | null
+          eventScore?: number | null
+          eventType?: string
+          highestPrice?: number | null
+          id?: number
+          listingCount?: number | null
+          lowestPrice?: number | null
+          medianPrice?: number | null
+          performerIds?: number[] | null
+          scrapeId?: string
+          state?: string | null
+          title?: string
+          venueCapacity?: number | null
+          venueId?: number | null
+          venueName?: string | null
+          venuePopularity?: number | null
+          venueScore?: number | null
+          venueUpcomingEventCount?: number | null
+        }
+        Relationships: []
+      }
+      sgEventsUpcoming: {
+        Row: {
+          announceDate: string | null
+          averagePrice: number | null
+          city: string | null
+          country: string | null
+          created_at: string | null
           eventDate: string | null
+          eventId: number | null
+          eventPopularity: number | null
           eventScore: number | null
           eventType: string | null
           highestPrice: number | null
           id: number
           listingCount: number | null
           lowestPrice: number | null
-          lowestSgPrice: number | null
           medianPrice: number | null
-          performerId: number | null
-          popularity: number | null
-          sgEventId: number | null
+          performerIds: number[] | null
+          scrapeId: string | null
+          state: string | null
           title: string | null
+          venueCapacity: number | null
           venueId: number | null
           venueName: string | null
-          venueState: string | null
+          venuePopularity: number | null
+          venueScore: number | null
+          venueUpcomingEventCount: number | null
         }
         Insert: {
           announceDate?: string | null
           averagePrice?: number | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
-          description?: string | null
           eventDate?: string | null
+          eventId?: number | null
+          eventPopularity?: number | null
           eventScore?: number | null
           eventType?: string | null
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
           lowestPrice?: number | null
-          lowestSgPrice?: number | null
           medianPrice?: number | null
-          performerId?: number | null
-          popularity?: number | null
-          sgEventId?: number | null
+          performerIds?: number[] | null
+          scrapeId?: string | null
+          state?: string | null
           title?: string | null
+          venueCapacity?: number | null
           venueId?: number | null
           venueName?: string | null
-          venueState?: string | null
+          venuePopularity?: number | null
+          venueScore?: number | null
+          venueUpcomingEventCount?: number | null
         }
         Update: {
           announceDate?: string | null
           averagePrice?: number | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
-          description?: string | null
           eventDate?: string | null
+          eventId?: number | null
+          eventPopularity?: number | null
           eventScore?: number | null
           eventType?: string | null
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
           lowestPrice?: number | null
-          lowestSgPrice?: number | null
           medianPrice?: number | null
-          performerId?: number | null
-          popularity?: number | null
-          sgEventId?: number | null
+          performerIds?: number[] | null
+          scrapeId?: string | null
+          state?: string | null
           title?: string | null
+          venueCapacity?: number | null
           venueId?: number | null
           venueName?: string | null
-          venueState?: string | null
+          venuePopularity?: number | null
+          venueScore?: number | null
+          venueUpcomingEventCount?: number | null
         }
         Relationships: []
       }
@@ -244,167 +343,78 @@ export interface Database {
           }
         ]
       }
-      sgPerformerDB: {
+      upcomingWarehouse: {
         Row: {
-          created_at: string | null
-          hasUpcomingEvents: boolean | null
-          id: number
-          name: string | null
-          performerId: number | null
-          performerScore: number | null
-          type: string | null
-          upcomingEventCount: number | null
+          averagePrice: number | null
+          created_at: string
+          eventCount: number | null
+          eventPopularity: number | null
+          eventScore: number | null
+          eventType: string
+          highestPrice: number | null
+          listingCount: number | null
+          lowestPrice: number | null
         }
         Insert: {
-          created_at?: string | null
-          hasUpcomingEvents?: boolean | null
-          id?: number
-          name?: string | null
-          performerId?: number | null
-          performerScore?: number | null
-          type?: string | null
-          upcomingEventCount?: number | null
+          averagePrice?: number | null
+          created_at: string
+          eventCount?: number | null
+          eventPopularity?: number | null
+          eventScore?: number | null
+          eventType: string
+          highestPrice?: number | null
+          listingCount?: number | null
+          lowestPrice?: number | null
         }
         Update: {
-          created_at?: string | null
-          hasUpcomingEvents?: boolean | null
-          id?: number
-          name?: string | null
-          performerId?: number | null
-          performerScore?: number | null
-          type?: string | null
-          upcomingEventCount?: number | null
-        }
-        Relationships: []
-      }
-      StateAggregates: {
-        Row: {
-          averagePriceAmax: number | null
-          averagePriceAmin: number | null
-          averagePriceMean: number | null
-          averagePriceMedian: number | null
-          country: string | null
-          created_at: string | null
-          eventPopularityAmax: number | null
-          eventPopularityAmin: number | null
-          eventPopularityMean: number | null
-          eventPopularityMedian: number | null
-          eventScoreAmax: number | null
-          eventScoreAmin: number | null
-          eventScoreMean: number | null
-          eventScoreMedian: number | null
-          highestPriceAmax: number | null
-          highestPriceAmin: number | null
-          highestPriceMean: number | null
-          highestPriceMedian: number | null
-          id: number
-          lowestPriceAmax: number | null
-          lowestPriceAmin: number | null
-          lowestPriceMean: number | null
-          lowestPriceMedian: number | null
-          medianPriceAmax: number | null
-          medianPriceAmin: number | null
-          medianPriceMean: number | null
-          medianPriceMedian: number | null
-          scrapeDate: string | null
-          state: string | null
-          venueScoreAmax: number | null
-          venueScoreAmin: number | null
-          venueScoreMean: number | null
-          venueScoreMedian: number | null
-          venueUpcomingEventCountsum: number | null
-        }
-        Insert: {
-          averagePriceAmax?: number | null
-          averagePriceAmin?: number | null
-          averagePriceMean?: number | null
-          averagePriceMedian?: number | null
-          country?: string | null
-          created_at?: string | null
-          eventPopularityAmax?: number | null
-          eventPopularityAmin?: number | null
-          eventPopularityMean?: number | null
-          eventPopularityMedian?: number | null
-          eventScoreAmax?: number | null
-          eventScoreAmin?: number | null
-          eventScoreMean?: number | null
-          eventScoreMedian?: number | null
-          highestPriceAmax?: number | null
-          highestPriceAmin?: number | null
-          highestPriceMean?: number | null
-          highestPriceMedian?: number | null
-          id?: number
-          lowestPriceAmax?: number | null
-          lowestPriceAmin?: number | null
-          lowestPriceMean?: number | null
-          lowestPriceMedian?: number | null
-          medianPriceAmax?: number | null
-          medianPriceAmin?: number | null
-          medianPriceMean?: number | null
-          medianPriceMedian?: number | null
-          scrapeDate?: string | null
-          state?: string | null
-          venueScoreAmax?: number | null
-          venueScoreAmin?: number | null
-          venueScoreMean?: number | null
-          venueScoreMedian?: number | null
-          venueUpcomingEventCountsum?: number | null
-        }
-        Update: {
-          averagePriceAmax?: number | null
-          averagePriceAmin?: number | null
-          averagePriceMean?: number | null
-          averagePriceMedian?: number | null
-          country?: string | null
-          created_at?: string | null
-          eventPopularityAmax?: number | null
-          eventPopularityAmin?: number | null
-          eventPopularityMean?: number | null
-          eventPopularityMedian?: number | null
-          eventScoreAmax?: number | null
-          eventScoreAmin?: number | null
-          eventScoreMean?: number | null
-          eventScoreMedian?: number | null
-          highestPriceAmax?: number | null
-          highestPriceAmin?: number | null
-          highestPriceMean?: number | null
-          highestPriceMedian?: number | null
-          id?: number
-          lowestPriceAmax?: number | null
-          lowestPriceAmin?: number | null
-          lowestPriceMean?: number | null
-          lowestPriceMedian?: number | null
-          medianPriceAmax?: number | null
-          medianPriceAmin?: number | null
-          medianPriceMean?: number | null
-          medianPriceMedian?: number | null
-          scrapeDate?: string | null
-          state?: string | null
-          venueScoreAmax?: number | null
-          venueScoreAmin?: number | null
-          venueScoreMean?: number | null
-          venueScoreMedian?: number | null
-          venueUpcomingEventCountsum?: number | null
+          averagePrice?: number | null
+          created_at?: string
+          eventCount?: number | null
+          eventPopularity?: number | null
+          eventScore?: number | null
+          eventType?: string
+          highestPrice?: number | null
+          listingCount?: number | null
+          lowestPrice?: number | null
         }
         Relationships: []
       }
       Watchlist: {
         Row: {
           created_at: string | null
+          eventId: number | null
           id: number
-          sgEventId: number | null
+          sgEventsId: number
+          userId: string
         }
         Insert: {
           created_at?: string | null
+          eventId?: number | null
           id?: number
-          sgEventId?: number | null
+          sgEventsId: number
+          userId: string
         }
         Update: {
           created_at?: string | null
+          eventId?: number | null
           id?: number
-          sgEventId?: number | null
+          sgEventsId?: number
+          userId?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "Watchlist_sgEventsId_fkey"
+            columns: ["sgEventsId"]
+            referencedRelation: "sgEvents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Watchlist_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {
@@ -503,13 +513,18 @@ export interface Database {
         }[]
       }
       get_event_type_aggs: {
-        Args: Record<PropertyKey, never>
+        Args: {
+          event_type_selected: string
+        }
         Returns: {
-          eventDate: string
+          created_at: string
           eventType: string
-          eventCount: number
-          avgPrice: number
-          maxPrice: number
+          averagePrice: number
+          highestPrice: number
+          lowestPrice: number
+          listingCount: number
+          eventScore: number
+          eventPopularity: number
         }[]
       }
       get_event_type_by_calendar_month: {
@@ -520,18 +535,19 @@ export interface Database {
           event_type_d: string
         }
         Returns: {
-          calendarMonth: string
+          created_at: string
           eventType: string
-          listingCountSum: number
-          meanPrice: number
-          maxPrice: number
-          seriesRank: number
-          datasetRank: number
+          listingCount: number
+          averagePrice: number
+          highestPrice: number
+          eventCount: number
+          eventScore: number
+          eventPopularity: number
         }[]
       }
       get_event_type_by_date: {
         Args: {
-          event_type_a: string
+          event_type_selected: string
         }
         Returns: {
           created_at: string
@@ -540,6 +556,19 @@ export interface Database {
           averagePrice: number
           highestPrice: number
           lowestPrice: number
+        }[]
+      }
+      get_event_type_by_day: {
+        Args: {
+          event_type_selected: string
+        }
+        Returns: {
+          eventType: string
+          created_at: string
+          averagePrice: number
+          lowestPrice: number
+          highestPrice: number
+          listingCount: number
         }[]
       }
       get_event_type_comparison_for_announced_lately: {
@@ -602,7 +631,51 @@ export interface Database {
           upcomingEventCount: number | null
         }[]
       }
+      get_events_by_type: {
+        Args: {
+          event_type_selected: string
+        }
+        Returns: {
+          created_at: string
+          eventId: number
+          title: string
+          eventType: string
+          announceDate: string
+          eventDate: string
+          eventPopularity: number
+          eventScore: number
+          averagePrice: number
+          medianPrice: number
+          highestPrice: number
+          lowestPrice: number
+          state: string
+          averagePriceLagOne: number
+          averagePriceLagThree: number
+          averagePriceLagSeven: number
+          averagePriceLagMonth: number
+        }[]
+      }
       get_events_in_state_in_date_range: {
+        Args: {
+          event_date: string
+          event_state: string
+        }
+        Returns: {
+          created_at: string
+          eventId: number
+          title: string
+          eventType: string
+          eventDate: string
+          eventPopularity: number
+          eventScore: number
+          averagePrice: number
+          medianPrice: number
+          highestPrice: number
+          lowestPrice: number
+          announceDate: string
+        }[]
+      }
+      get_events_in_state_in_three_day_range: {
         Args: {
           event_date: string
           event_state: string
@@ -637,6 +710,22 @@ export interface Database {
           genre: string
           eventDate: string
           lastMedianPrice: number
+        }[]
+      }
+      get_latest_state_avgs: {
+        Args: {
+          state_selected: string
+        }
+        Returns: {
+          state: string
+          eventDate: string
+          averagePrice: number
+          lowestPrice: number
+          highestPrice: number
+          averagePopularity: number
+          averageScore: number
+          eventCount: number
+          listingCount: number
         }[]
       }
       get_min_max_event_dates: {
@@ -701,9 +790,23 @@ export interface Database {
           diff: number
         }[]
       }
+      get_state_avgs_by_day: {
+        Args: {
+          state_selected: string
+        }
+        Returns: {
+          state: string
+          created_at: string
+          averagePrice: number
+          lowestPrice: number
+          highestPrice: number
+          listingCount: number
+        }[]
+      }
       get_state_avgs_within_two_week_interval: {
         Args: {
           state_selected: string
+          event_selected_date: string
         }
         Returns: {
           state: string
@@ -739,6 +842,20 @@ export interface Database {
           created_at: string
         }[]
       }
+      get_total_event_type_aggs: {
+        Args: {
+          event_type_selected: string
+        }
+        Returns: {
+          eventType: string
+          averagePrice: number
+          eventCount: number
+          highestPrice: number
+          listingCount: number
+          eventPopularity: number
+          eventScore: number
+        }[]
+      }
       get_total_listing_by_event_type: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -751,8 +868,7 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: {
           eventType: string
-          totalListingCount: number
-          rank: number
+          listingCount: number
         }[]
       }
       get_types:
@@ -860,6 +976,22 @@ export interface Database {
           venuePopularity: number | null
           venueScore: number | null
           venueUpcomingEventCount: number | null
+        }[]
+      }
+      just_announced_by_type: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          eventId: number
+          eventType: string
+          title: string
+          announceDate: string
+          eventDate: string
+          listingCount: number
+          averagePrice: number
+          highestPrice: number
+          eventScore: number
+          eventPopularity: number
         }[]
       }
     }

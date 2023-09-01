@@ -39,7 +39,11 @@
 				<div class="grid grid-cols-1 grid-rows-1 h-8 w-[6.3rem]">
 					{#key isWatched}
 						<div class="h-8 col-span-1 row-span-1 w-[6.3rem]">
-							<form method="POST" action={isWatched ? '?/remove' : '?/add'} use:enhance>
+							<form
+								method="POST"
+								action={isWatched ? 'watchlist/remove' : 'watchlist/add'}
+								use:enhance
+							>
 								<input type="hidden" name="sgEventsId" value={data.latestRecord.id} />
 								<button
 									class="btn btn-sm {isWatched

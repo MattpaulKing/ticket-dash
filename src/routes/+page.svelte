@@ -1,20 +1,47 @@
 <script lang="ts">
-	import MeanLineChart from '$lib/components/Charts/MeanLineChart.svelte';
-	import EventTable from '$lib/components/EventTable.svelte';
+	import 'chartjs-adapter-date-fns';
+	import { options, plugins } from '$lib/components/charts/eventTypeLineChart';
 	import { filterStore } from '$lib/components/Filters/filterStore';
 	import KpiCard from '$lib/components/KpiCard.svelte';
+	import { Line } from 'svelte-chartjs';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
+	import { transformDatasetData } from '$lib/components/charts/utils/transformations';
+	import LongTitleHide from '$lib/components/LongTitleHide.svelte';
+
 	export let data;
+	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount'];
+	let yAxisSelected = 'averagePrice';
 
-	const totalEventAggs = data.totalEventTypeAggs;
-	const topTotalEventAggs = totalEventAggs.slice(0, 4);
+	const topTotalEventAggs = data.totalEventTypeAggs.slice(0, 4);
+	let kpiDatasets = topTotalEventAggs.map((totalAgg) => ({
+		label: totalAgg.eventType,
+		datasets: [
+			{
+				data: transformDatasetData(
+					data.splitMonthlyEventAggs.find(
+						(monthAgg) => monthAgg[0].eventType === totalAgg.eventType
+					),
+					{ x: 'created_at', y: 'listingCount' }
+				)
+			}
+		]
+	}));
 
-	const yAxisKeys = ['meanPrice', 'maxPrice', 'listingCountSum'];
-	let yAxisSelected = 'meanPrice';
+	$: lineChartDatasets = {
+		datasets: topTotalEventAggs.map((totalAgg) => ({
+			label: totalAgg.eventType,
+			data: transformDatasetData(
+				data.splitMonthlyEventAggs.find((monthAgg) => monthAgg[0].eventType === totalAgg.eventType),
+				{ x: 'created_at', y: yAxisSelected }
+			)
+		}))
+	};
+
+	//BUG: Broke the filterStore
 
 	//TODO:
-	//Home page's total listings should show the volume of sales i.e. changes in listingCount
 	//Watchlist page needs improvement - add a "dashboard"
+	//Watchlist actions - put back into watchlist, shouldn't reload in build
 	//Upcoming pages needs improvement - - add a "dashboard"
 	//TODO:
 	//Replace the table on the home page with a bar chart of scores and coloured by their types
@@ -31,13 +58,11 @@
 			{#each topTotalEventAggs as agg}
 				{#key $filterStore.eventType}
 					<KpiCard
-						chartData={data.monthlyEventAggs.filter(
-							(monthAgg) => monthAgg.eventType === agg.eventType
-						)}
-						axisKeys={{ x: 'calendarMonth', y: 'listingCountSum' }}
-						aggData={agg}
-						titleAccessor={'eventType'}
-						kpiAccessor={'totalListingCount'}
+						title={agg.eventType}
+						subtitle={'Average Listings: '}
+						indicatorVal={agg.listingCount}
+						link={`eventType/${agg.eventType}`}
+						chartData={kpiDatasets.filter((dataset) => dataset.label === agg.eventType)[0]}
 					/>
 				{/key}
 			{/each}
@@ -58,21 +83,28 @@
 			<div id="legend-container" />
 			{#key $filterStore.eventType}
 				{#key yAxisSelected}
-					<MeanLineChart
-						groupedEvents={data.splitMonthlyEventAggs}
-						axisKeys={{ x: 'calendarMonth', y: yAxisSelected }}
-					/>
+					<div class="h-96 w-auto">
+						<Line data={lineChartDatasets} {options} {plugins} />
+					</div>
 				{/key}
 			{/key}
 		</div>
 	</div>
-	<div class="col-span-5 mt-6">
-		{#await data.streamed.events}
-			loading...
-		{:then events}
-			<div class="mt-4">
-				<EventTable events={events.data} />
-			</div>
-		{/await}
-	</div>
+</div>
+<div class="grid grid-cols-4">
+	{#await data.streamed.justAnnouncedByType}
+		<div class="card h-36 w-36 animate-pulse" />
+	{:then justAnnouncedByType}
+		<section class="mt-6">
+			{#each justAnnouncedByType.data as newEvent}
+				<article class="card p-4">
+					<!-- TODO: better to just use a tooltip -->
+					<LongTitleHide title={newEvent.title} dbId={newEvent.id} eventId={newEvent.eventId} />
+					<p class="capitalize m-2">{newEvent.eventType}</p>
+				</article>
+			{/each}
+		</section>
+	{:catch err}
+		<p>{err}</p>
+	{/await}
 </div>

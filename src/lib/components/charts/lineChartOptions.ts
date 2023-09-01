@@ -1,6 +1,3 @@
-import { Chart } from 'chart.js/auto';
-Chart.defaults.elements.point.radius = 5
-
 /*
   pointStyle: 'circle',
   rotation: 0,
