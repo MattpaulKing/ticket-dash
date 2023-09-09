@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
 	import EventTable from '$lib/components/EventTable.svelte';
 	import EventMeanLineChart from '$lib/components/charts/EventMeanLineChart.svelte';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils';
@@ -20,7 +20,6 @@
 	const handleWatchlist = () => {
 		isWatched = !isWatched;
 	};
-	//TODO: make the card a component
 </script>
 
 <h1 class="text-2xl mb-6">{data.latestRecord.title}</h1>

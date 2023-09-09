@@ -6,14 +6,15 @@
 	import { Line } from 'svelte-chartjs';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
 	import { transformDatasetData } from '$lib/components/charts/utils/transformations';
-	import LongTitleHide from '$lib/components/LongTitleHide.svelte';
+	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
+	import { eventTypeAggStore } from '$lib/stores/eventTypeAggStore';
 
 	export let data;
-	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount'];
+	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount', 'eventScore'];
 	let yAxisSelected = 'averagePrice';
-
 	const topTotalEventAggs = data.totalEventTypeAggs.slice(0, 4);
-	let kpiDatasets = topTotalEventAggs.map((totalAgg) => ({
+	$eventTypeAggStore = data.splitMontlyEventAggs;
+	$: kpiDatasets = topTotalEventAggs.map((totalAgg) => ({
 		label: totalAgg.eventType,
 		datasets: [
 			{
@@ -38,15 +39,11 @@
 	};
 
 	//BUG: Broke the filterStore
+	//fix  would be to add a plugin to charts that checks for filters
 
 	//TODO:
-	//Watchlist page needs improvement - add a "dashboard"
-	//Watchlist actions - put back into watchlist, shouldn't reload in build
-	//Upcoming pages needs improvement - - add a "dashboard"
-	//TODO:
-	//Replace the table on the home page with a bar chart of scores and coloured by their types
-	//The listings charts don't really show anything, because they're done by event date - recreate with created_at instead
-	//Data warehousing
+	//Watchlist page should have a "view" when a card is clicked
+	//Upcoming page needs a chart for event vs. related event types / events in area
 </script>
 
 <div>
@@ -73,9 +70,14 @@
 				<form class="z-10 ml-auto p-4">
 					<select class="select w-40" bind:value={yAxisSelected}>
 						{#each yAxisKeys as selector}
-							<option class="capitalize" value={selector}>
-								{selector.slice(0, indexOfFirstUppercase(selector))}
-							</option>
+							<option value={selector}>
+								<p>
+									{selector[0].toUpperCase() +
+										selector.slice(1, indexOfFirstUppercase(selector)) +
+										' ' +
+										selector.slice(indexOfFirstUppercase(selector))}
+								</p></option
+							>
 						{/each}
 					</select>
 				</form>
@@ -91,20 +93,23 @@
 		</div>
 	</div>
 </div>
-<div class="grid grid-cols-4">
-	{#await data.streamed.justAnnouncedByType}
-		<div class="card h-36 w-36 animate-pulse" />
-	{:then justAnnouncedByType}
-		<section class="mt-6">
-			{#each justAnnouncedByType.data as newEvent}
-				<article class="card p-4">
-					<!-- TODO: better to just use a tooltip -->
-					<LongTitleHide title={newEvent.title} dbId={newEvent.id} eventId={newEvent.eventId} />
-					<p class="capitalize m-2">{newEvent.eventType}</p>
-				</article>
-			{/each}
-		</section>
-	{:catch err}
-		<p>{err}</p>
-	{/await}
-</div>
+<section class="flex flex-row flex-wrap gap-6 mt-6 justify-around">
+	{#each data.justAnnouncedByType
+		.sort((a, b) => b.eventScore - a.eventScore)
+		.slice(0, 10) as newEvent}
+		{#await data.streamed.justAnnouncedByTypeDetails}
+			<EventRecordsCard latestRecord={newEvent} eventRecords={null} />
+		{:then justAnnouncedEventRecords}
+			<EventRecordsCard latestRecord={newEvent} eventRecords={justAnnouncedEventRecords}>
+				<svelte:fragment slot="chart">
+					<Line
+						data={justAnnouncedEventRecords.find(
+							(detailRecords) => detailRecords.eventId === newEvent.eventId
+						).chartData}
+						{options}
+					/>
+				</svelte:fragment>
+			</EventRecordsCard>
+		{/await}
+	{/each}
+</section>

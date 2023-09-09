@@ -1,6 +1,14 @@
-import { error, fail, type Actions } from "@sveltejs/kit"
+import { error } from "@sveltejs/kit"
 
-
+async function getWatchlistRecords(locals: App.Locals, eventIds: {eventId: number}[]) {
+ return await Promise.all(eventIds.map(async ({eventId}) => {
+    const { data: singleWatchlistRecords, error: watchlistErr } = await locals.supabase.rpc("watchlist_records", { "event_id": eventId })
+    if (watchlistErr) {
+      throw error(500, "Error loading watchlist records, please try again")
+    }
+    return singleWatchlistRecords
+  }))
+}
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
 
@@ -8,13 +16,10 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
   if (watchlistError) {
     throw error(403, "Watchlist wasn't found, please try again")
   }
-  const {data: events, error: eventsError} = await locals.supabase.from("sgEvents").select("*").in('eventId', watchlistEventIds.map( (id) => id.eventId))
-  if (eventsError) {
-    throw error(403, "Related events weren't found, please try again")
-  }
+
+  const watchlistRecords = await getWatchlistRecords(locals, watchlistEventIds)
    
   return {
-    watchlistEventIds,
-    events,
+    watchlistRecords
   }
 }

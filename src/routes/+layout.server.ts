@@ -1,11 +1,16 @@
 import { parse } from 'date-fns'
-import { error, type Cookies, type Actions, fail } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import type { Database } from "$lib/types/db"
 type DateRange = Database["public"]["Functions"]["get_min_max_event_dates"]["Returns"]
 
 export const load = async ({ locals }: { locals: App.Locals }) => {
 
   const session = await locals.getSession()
+  const {data: watchlistEventIds, err: watchlistErr } = await locals.supabase.from("Watchlist").select("eventId")
+  if (watchlistErr) {
+    throw error(500, "Watchlist couldn't be loaded, please try again")
+  }
+
   const getDistinctTitles = async () => {
     const { data, error: err } = await locals.supabase.from("distinct_titles").select()
     if (err) {
@@ -44,6 +49,7 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
 
   return {
     session, 
+    watchlistEventIds,
     filterOptions: {
       distinctTitles: getDistinctTitles(),
       distinctEventTypes: getDistinctEventTypes(), 

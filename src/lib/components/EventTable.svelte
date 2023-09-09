@@ -171,7 +171,7 @@
 		})
 	]);
 	const { headerRows, rows, tableAttrs, tableBodyAttrs } = table.createViewModel(columns);
-	//TODO change the search to an enum
+	//TODO reconfigure the filters to be like filter store selections
 </script>
 
 <div class="relative rounded-xl overflow-auto border border-surface-600 w-full">

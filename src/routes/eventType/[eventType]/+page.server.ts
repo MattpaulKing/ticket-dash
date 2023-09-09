@@ -1,7 +1,11 @@
 import { error } from "@sveltejs/kit"
 
-export const load = async ({ locals, params }: { locals: App.Locals, params: {eventType: string} }) => {
- 
+export const load = async ({ locals, params, setHeaders }: { locals: App.Locals, params: {eventType: string}, setHeaders: (headers: Record<string, string>) => void }) => {
+  
+  setHeaders({
+    "cache-control": "max-age=360"
+  })
+
   const { data: eventTypeAggs, error: eventTypeError } = await locals.supabase.rpc("get_event_type_aggs", { event_type_selected: params.eventType })
   if (eventTypeError) {
     console.log(eventTypeError)

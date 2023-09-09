@@ -18,7 +18,7 @@ export const stateStore: Writable<string[]> = writable([]);
 export const eventStore: Writable<string[]> = writable([]);
 
 export type Filter = {
-  type: string,
+  type: 'lte' | 'gte' | 'in',
   value: string | string[] | [string, string] 
 }
 export type Filters = Partial<Record<keyof Tables<"sgEvents">, Filter>>

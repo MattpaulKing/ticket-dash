@@ -3,10 +3,10 @@
 	import { Line } from 'svelte-chartjs';
 	import { options } from '$lib/components/charts/utils/kpiLineChartOptions';
 	//TODO: add targets
-	export let title: string = '';
-	export let subtitle: string = '';
-	export let indicatorVal: number = 0;
-	export let link: string = '';
+	export let title = '';
+	export let subtitle = '';
+	export let indicatorVal = 0;
+	export let link = '';
 	export let chartData;
 </script>
 
@@ -26,8 +26,8 @@
 			<p class="mr-2">{subtitle}</p>
 			<h3
 				class="text-xl col-start-3 justify-self-end {indicatorVal > 0
-					? 'text-success-500'
-					: 'text-error-500'}"
+					? 'text-green-500'
+					: 'text-red-500'}"
 			>
 				{formatNumber(indicatorVal, 1)}
 			</h3>

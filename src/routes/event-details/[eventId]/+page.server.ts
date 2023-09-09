@@ -1,7 +1,11 @@
-import { error, type Actions, fail } from "@sveltejs/kit";
+import { error } from "@sveltejs/kit";
 
 
-export const load = async ({ locals, params }: { locals: App.Locals, params: {eventId: number}}) => {
+export const load = async ({ locals, params, setHeaders }: { locals: App.Locals, params: {eventId: number}, setHeaders: (headers: Record<string, string>) => void}) => {
+  
+    setHeaders({
+      "cache-control": "max-age=360"
+    })
 
     const {data: latestRecord, error: latestRecordError} = await locals.supabase.from("sgEventsUpcoming").select("*").eq("eventId", params.eventId).order('created_at', { ascending: false }).limit(1).single()
     if (latestRecordError) {

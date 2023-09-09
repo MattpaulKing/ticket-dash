@@ -1,5 +1,4 @@
 <script lang="ts">
-	import moment from 'moment';
 	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
 	import '@skeletonlabs/skeleton/styles/skeleton.css';
 	import '../app.postcss';
@@ -19,6 +18,8 @@
 	import SignOut from '$lib/icons/SignOut.svelte';
 	import { afterNavigate } from '$app/navigation';
 	import { writable } from 'svelte/store';
+	import { watchlistStore } from '$lib/components/Watchlist/watchlistStore';
+	import { onMount } from 'svelte';
 
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
@@ -49,6 +50,10 @@
 		}
 	}
 	afterNavigate(() => ($showNavBar = false));
+
+	onMount(() => {
+		$watchlistStore = data.watchlistEventIds.map(({ eventId }: { eventId: number }) => eventId);
+	});
 </script>
 
 <Drawer width="md:w-48" rounded="rounded-2xl">
