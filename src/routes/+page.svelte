@@ -44,6 +44,8 @@
 	//TODO:
 	//Watchlist page should have a "view" when a card is clicked
 	//Upcoming page needs a chart for event vs. related event types / events in area
+
+	console.log(data.justAnnouncedByType);
 </script>
 
 <div>
@@ -94,22 +96,19 @@
 	</div>
 </div>
 <section class="flex flex-row flex-wrap gap-6 mt-6 justify-around">
-	{#each data.justAnnouncedByType
-		.sort((a, b) => b.eventScore - a.eventScore)
-		.slice(0, 10) as newEvent}
-		{#await data.streamed.justAnnouncedByTypeDetails}
+	{#await data.streamed.justAnnouncedByTypeDetails}
+		<!--
+		{#each data.justAnnouncedByType as newEvent}
 			<EventRecordsCard latestRecord={newEvent} eventRecords={null} />
-		{:then justAnnouncedEventRecords}
-			<EventRecordsCard latestRecord={newEvent} eventRecords={justAnnouncedEventRecords}>
+		{/each}
+    -->
+	{:then justAnnouncedEventRecords}
+		{#each justAnnouncedEventRecords as eventRecords}
+			<EventRecordsCard latestRecord={eventRecords} eventRecords={eventRecords.records}>
 				<svelte:fragment slot="chart">
-					<Line
-						data={justAnnouncedEventRecords.find(
-							(detailRecords) => detailRecords.eventId === newEvent.eventId
-						).chartData}
-						{options}
-					/>
+					<Line data={eventRecords.chartData} {options} />
 				</svelte:fragment>
 			</EventRecordsCard>
-		{/await}
-	{/each}
+		{/each}
+	{/await}
 </section>

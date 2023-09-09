@@ -79,25 +79,28 @@ export const load = async ({ locals, setHeaders }: {locals: App.Locals, setHeade
       throw error(500, "Error fetching recently announced events")
     }
 
-    const justAnnouncedByTypeDetails = async (distinctJustAnnounced: Functions<"just_announced_by_type">): Promise<Functions<"just_announced_by_type">> => {
+    const justAnnouncedByTypeDetails = async (distinctJustAnnounced: Functions<"just_announced_by_type">): Promise<Functions<"just_announced_by_type_details">> => {
       const { data, error } =  await locals.supabase.rpc("just_announced_by_type_details")
       if (error) {
         console.log("Unable to find records for recent events")
       }
-      return distinctJustAnnounced.map((distinctEvent) => ({
+      return distinctJustAnnounced.map((distinctEvent) => {
+        const distinctEventRecords = data.filter((record: Functions<"just_announced_by_type_details">) => record.eventId === distinctEvent.eventId)
+        return {
 			...distinctEvent,
+      records: distinctEventRecords,
 			chartData: {
 				datasets: [
 					{
 						label: distinctEvent.title,
 						data: transformDatasetData(
-							data.filter((record: Functions<"just_announced_by_type">) => record.eventId === distinctEvent.eventId),
+              distinctEventRecords,
 							{ x: 'created_at', y: 'averagePrice' }
 						)
 					}
 				]
 			}
-		}))
+		}}).sort( (a, b) => b.eventScore - a.eventScore).slice(0, 10)
     }
 
     return {

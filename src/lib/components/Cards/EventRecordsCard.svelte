@@ -18,26 +18,27 @@
 			(res, currRecord, idx, { length }) => {
 				if (idx === length - 1) {
 					return {
-						averagePrice: currRecord.averagePrice ?? 0 / length,
-						eventScore: currRecord.eventScore ?? 0 / length,
-						eventPopularity: currRecord.eventPopularity ?? 0 / length,
-						highestPrice: currRecord.highestPrice ?? 0 / length
+						averagePrice: (res.averagePrice + currRecord.averagePrice) / length,
+						eventScore: (res.eventScore + currRecord.eventScore) / length,
+						eventPopularity: (res.eventPopularity + currRecord.eventPopularity) / length,
+						highestPrice: (res.highestPrice + currRecord.highestPrice) / length
 					};
 				} else {
 					return {
-						averagePrice: currRecord.averagePrice ?? 0,
-						eventScore: currRecord.eventScore ?? 0,
-						eventPopularity: currRecord.eventPopularity ?? 0,
-						highestPrice: currRecord.highestPrice ?? 0
+						averagePrice: res.averagePrice + currRecord.averagePrice,
+						eventScore: res.eventScore + currRecord.eventScore,
+						eventPopularity: res.eventPopularity + currRecord.eventPopularity,
+						highestPrice: res.highestPrice + currRecord.highestPrice
 					};
 				}
 			},
 			{ averagePrice: 0, eventScore: 0, eventPopularity: 0, highestPrice: 0 }
 		);
 	}
+	console.log(eventAgg);
 </script>
 
-<article class="card p-4 m-6 w-96">
+<article class="card p-4 m-6 max-w-md">
 	<div class="h-36 w-80 {awaiting ? 'animate-pulse' : ''}">
 		<slot name="chart" />
 	</div>
@@ -55,12 +56,21 @@
 		<WatchlistBtn dbId={latestRecord.id} eventId={latestRecord.eventId} />
 	</div>
 	<div class="m-2">
-		<div class="grid grid-cols-2 gap-4 justify-between place-items-center h-full">
+		<div class="grid grid-cols-[40%_60%] gap-4 justify-between place-items-center h-full">
 			<div class="flex flex-col">
 				<p class="capitalize">{latestRecord.eventType.replaceAll('_', ' ')}</p>
-				<p>State: {latestRecord.state}</p>
-				<p>Date: {latestRecord.eventDate}</p>
-				<p>Since: {latestRecord.announceDate}</p>
+				<span class="flex gap-1"
+					><p class="text-sm place-self-end">State:</p>
+					<p>{latestRecord.state}</p>
+				</span>
+				<span class="flex gap-1"
+					><p class="text-sm place-self-end">Date:</p>
+					<p>{latestRecord.eventDate}</p>
+				</span>
+				<span class="flex gap-1"
+					><p class="text-sm place-self-end">Since:</p>
+					<p>{latestRecord.announceDate}</p>
+				</span>
 			</div>
 			<div class="flex flex-col h-full place-content-start">
 				<span class="flex gap-2"
@@ -68,7 +78,9 @@
 					{#if !awaiting}
 						{@const scoreDiff =
 							((latestRecord.eventScore - eventAgg.eventScore) / latestRecord.eventScore) * 100}
-						<p class={scoreDiff > 0 ? 'text-green-500' : 'text-red-500'}>{scoreDiff.toFixed(0)}%</p>
+						<p class={scoreDiff >= -0.9 ? 'text-green-500' : 'text-red-500'}>
+							{scoreDiff.toFixed(0)}%
+						</p>
 					{/if}
 				</span>
 				<span class="flex gap-2">
@@ -93,7 +105,7 @@
 					{/if}
 				</span>
 				<span class="flex gap-2">
-					<p class="whitespace-normal">Price: {latestRecord.highestPrice.toFixed(0)}</p>
+					<p class="whitespace-normal">Highest: {latestRecord.highestPrice.toFixed(0)}</p>
 					{#if !awaiting}
 						{@const highestPriceDiff =
 							((latestRecord.highestPrice - eventAgg.highestPrice) / latestRecord.highestPrice) *
