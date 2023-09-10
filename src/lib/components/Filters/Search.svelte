@@ -13,8 +13,10 @@
 	import DropdownFilterOptions from './DropdownFilterOptions.svelte';
 	import FilterIcon from '$lib/icons/FilterIcon.svelte';
 	import { readable } from 'svelte/store';
-	import Page from '../../../routes/+page.svelte';
-	export let ogFilterOptions: [string[], string[], string[], [Date, Date]];
+	import { distinctTitles } from '$lib/stores/distinctTitles';
+	import { distinctTypes } from '$lib/stores/distinctTypes';
+	import { distinctStates } from '$lib/stores/distinctStates';
+	import { dateRangeStore } from '$lib/stores/dateRangeStore';
 
 	let filtersVisible = false;
 	let titleInput = '';
@@ -22,21 +24,21 @@
 	let stateInput = '';
 
 	const filterOptions = readable({
-		distinctTitles: ogFilterOptions[0].map((title: string) => ({
+		distinctTitles: $distinctTitles.map((title: string) => ({
 			label: title,
 			value: title
 		})),
-		distinctEventTypes: ogFilterOptions[1].map((eventType: string) => ({
+		distinctEventTypes: $distinctTypes.map((eventType: string) => ({
 			label: toTitleCase(eventType, '_'),
 			value: eventType
 		})),
-		distinctStates: ogFilterOptions[2].map((state: string) => ({
+		distinctStates: $distinctStates.map((state: string) => ({
 			label: state,
 			value: state
 		})),
 		dates: {
-			min: ogFilterOptions[3][0].toISOString(),
-			max: ogFilterOptions[3][1].toISOString()
+			min: $dateRangeStore[0].toISOString(),
+			max: $dateRangeStore[1].toISOString()
 		}
 	});
 
@@ -57,7 +59,7 @@
 						searchCol="title"
 						searchType="in"
 						name="chips"
-						fzfwhitelist={ogFilterOptions[0]}
+						fzfwhitelist={distinctTitles}
 					/>
 					<AllowList
 						bind:input={titleInput}
@@ -76,7 +78,7 @@
 						searchCol="eventType"
 						searchType="in"
 						name="chips"
-						fzfwhitelist={ogFilterOptions[1]}
+						fzfwhitelist={distinctTypes}
 					/>
 					<AllowList
 						bind:input={eventTypeInput}
@@ -119,7 +121,7 @@
 						searchCol="state"
 						searchType="in"
 						name="chips"
-						fzfwhitelist={ogFilterOptions[2]}
+						fzfwhitelist={distinctStates}
 					/>
 					<AllowList
 						bind:input={stateInput}

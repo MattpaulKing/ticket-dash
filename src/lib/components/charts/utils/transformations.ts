@@ -7,7 +7,7 @@ type AxisAccessors = {
     return Object.keys(o1).filter({}.hasOwnProperty.bind(o2));
 }
 
-  export function transformDatasetData(data: any[], axisKeys: AxisAccessors) {
+  export function transformDatasetData(data: any, axisKeys: AxisAccessors) {
 		return data.map((record) => ({
 			x: record[axisKeys.x],
 			y: record[axisKeys.y]

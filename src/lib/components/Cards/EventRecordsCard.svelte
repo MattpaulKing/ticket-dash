@@ -35,7 +35,6 @@
 			{ averagePrice: 0, eventScore: 0, eventPopularity: 0, highestPrice: 0 }
 		);
 	}
-	console.log(eventAgg);
 </script>
 
 <article class="card p-4 m-6 max-w-md">

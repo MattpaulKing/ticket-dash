@@ -1,3 +1,5 @@
+//generated using npx supabase gen types typescript --project-id "{$PROJECT_ID}" --schema public > ./src/lib/types/db.ts
+
 export type Json =
   | string
   | number
@@ -50,9 +52,9 @@ export interface Database {
           country: string | null
           created_at: string | null
           eventDate: string
-          eventId: number | null
+          eventId: number
           eventPopularity: number | null
-          eventScore: number | null
+          eventScore: number
           eventType: string
           highestPrice: number | null
           id: number
@@ -77,9 +79,9 @@ export interface Database {
           country?: string | null
           created_at?: string | null
           eventDate: string
-          eventId?: number | null
+          eventId: number
           eventPopularity?: number | null
-          eventScore?: number | null
+          eventScore: number
           eventType?: string
           highestPrice?: number | null
           id?: number
@@ -104,9 +106,9 @@ export interface Database {
           country?: string | null
           created_at?: string | null
           eventDate?: string
-          eventId?: number | null
+          eventId?: number
           eventPopularity?: number | null
-          eventScore?: number | null
+          eventScore?: number
           eventType?: string
           highestPrice?: number | null
           id?: number
@@ -218,10 +220,10 @@ export interface Database {
           country: string | null
           created_at: string | null
           eventDate: string | null
-          eventId: number | null
+          eventId: number
           eventPopularity: number | null
-          eventScore: number | null
-          eventType: string | null
+          eventScore: number
+          eventType: string
           highestPrice: number | null
           id: number
           listingCount: number | null
@@ -245,10 +247,10 @@ export interface Database {
           country?: string | null
           created_at?: string | null
           eventDate?: string | null
-          eventId?: number | null
+          eventId: number
           eventPopularity?: number | null
-          eventScore?: number | null
-          eventType?: string | null
+          eventScore: number
+          eventType: string
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
@@ -272,10 +274,10 @@ export interface Database {
           country?: string | null
           created_at?: string | null
           eventDate?: string | null
-          eventId?: number | null
+          eventId?: number
           eventPopularity?: number | null
-          eventScore?: number | null
-          eventType?: string | null
+          eventScore?: number
+          eventType?: string
           highestPrice?: number | null
           id?: number
           listingCount?: number | null
@@ -382,29 +384,29 @@ export interface Database {
       Watchlist: {
         Row: {
           created_at: string | null
+          dbId: number
           eventId: number | null
           id: number
-          sgEventsId: number
           userId: string
         }
         Insert: {
           created_at?: string | null
+          dbId: number
           eventId?: number | null
           id?: number
-          sgEventsId: number
           userId: string
         }
         Update: {
           created_at?: string | null
+          dbId?: number
           eventId?: number | null
           id?: number
-          sgEventsId?: number
           userId?: string
         }
         Relationships: [
           {
-            foreignKeyName: "Watchlist_sgEventsId_fkey"
-            columns: ["sgEventsId"]
+            foreignKeyName: "Watchlist_dbId_fkey"
+            columns: ["dbId"]
             referencedRelation: "sgEvents"
             referencedColumns: ["id"]
           },
@@ -457,28 +459,34 @@ export interface Database {
       get_announced_last_three_days: {
         Args: Record<PropertyKey, never>
         Returns: {
-          created_at: string
           eventId: number
           title: string
           eventType: string
+          state: string
+          created_at: string
           announceDate: string
           eventDate: string
-          eventMonth: string
-          eventPopularity: number
-          eventScore: number
           averagePrice: number
-          medianPrice: number
-          highestPrice: number
-          lowestPrice: number
+          eventScore: number
+          eventPopularity: number
           listingCount: number
+        }[]
+      }
+      get_announced_last_week: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          eventId: number
+          title: string
+          eventType: string
           state: string
-          city: string
-          venueCapacity: string
-          comparisonAveragePrice: number
-          comparisonHighestPrice: number
-          comparisonListingCount: number
-          comparisonScore: number
-          comparisonPopularity: number
+          created_at: string
+          announceDate: string
+          eventDate: string
+          averagePrice: number
+          highestPrice: number
+          eventScore: number
+          eventPopularity: number
+          listingCount: number
         }[]
       }
       get_announced_this_week: {
@@ -927,9 +935,9 @@ export interface Database {
           country: string | null
           created_at: string | null
           eventDate: string
-          eventId: number | null
+          eventId: number
           eventPopularity: number | null
-          eventScore: number | null
+          eventScore: number
           eventType: string
           highestPrice: number | null
           id: number
@@ -957,9 +965,9 @@ export interface Database {
           country: string | null
           created_at: string | null
           eventDate: string
-          eventId: number | null
+          eventId: number
           eventPopularity: number | null
-          eventScore: number | null
+          eventScore: number
           eventType: string
           highestPrice: number | null
           id: number
@@ -981,9 +989,11 @@ export interface Database {
       just_announced_by_type: {
         Args: Record<PropertyKey, never>
         Returns: {
+          id: number
           created_at: string
           eventId: number
           eventType: string
+          state: string
           title: string
           announceDate: string
           eventDate: string
@@ -992,6 +1002,104 @@ export interface Database {
           highestPrice: number
           eventScore: number
           eventPopularity: number
+        }[]
+      }
+      just_announced_by_type_details: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          created_at: string
+          eventId: number
+          eventType: string
+          title: string
+          state: string
+          announceDate: string
+          eventDate: string
+          listingCount: number
+          averagePrice: number
+          highestPrice: number
+          eventScore: number
+          eventPopularity: number
+        }[]
+      }
+      month_aggs: {
+        Args: {
+          agg_by: string
+        }
+        Returns: {
+          created_at: string
+          agg_by: string
+          medianPrice: number
+          highestPrice: number
+          listingCount: number
+          eventScore: number
+          eventPopularity: number
+          eventCount: number
+          recordCount: number
+        }[]
+      }
+      state_aggs_by_interval: {
+        Args: {
+          interval_selected: string
+        }
+        Returns: {
+          created_at: string
+          state: string
+          medianPrice: number
+          highestPrice: number
+          listingCount: number
+          eventScore: number
+          eventPopularity: number
+          eventCount: number
+          recordCount: number
+        }[]
+      }
+      type_aggs_by_interval: {
+        Args: {
+          interval_selected: string
+        }
+        Returns: {
+          created_at: string
+          eventType: string
+          medianPrice: number
+          highestPrice: number
+          listingCount: number
+          eventScore: number
+          eventPopularity: number
+          eventCount: number
+          recordCount: number
+        }[]
+      }
+      watchlist_records: {
+        Args: {
+          event_id: number
+        }
+        Returns: {
+          announceDate: string | null
+          averagePrice: number | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          eventDate: string | null
+          eventId: number
+          eventPopularity: number | null
+          eventScore: number
+          eventType: string
+          highestPrice: number | null
+          id: number
+          listingCount: number | null
+          lowestPrice: number | null
+          medianPrice: number | null
+          performerIds: number[] | null
+          scrapeId: string | null
+          state: string | null
+          title: string | null
+          venueCapacity: number | null
+          venueId: number | null
+          venueName: string | null
+          venuePopularity: number | null
+          venueScore: number | null
+          venueUpcomingEventCount: number | null
         }[]
       }
     }

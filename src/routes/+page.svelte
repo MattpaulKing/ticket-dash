@@ -7,13 +7,13 @@
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
 	import { transformDatasetData } from '$lib/components/charts/utils/transformations';
 	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
-	import { eventTypeAggStore } from '$lib/stores/eventTypeAggStore';
+	import type { PageData } from './$types';
 
-	export let data;
+	export let data: PageData;
 	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount', 'eventScore'];
 	let yAxisSelected = 'averagePrice';
 	const topTotalEventAggs = data.totalEventTypeAggs.slice(0, 4);
-	$eventTypeAggStore = data.splitMontlyEventAggs;
+
 	$: kpiDatasets = topTotalEventAggs.map((totalAgg) => ({
 		label: totalAgg.eventType,
 		datasets: [
@@ -44,8 +44,6 @@
 	//TODO:
 	//Watchlist page should have a "view" when a card is clicked
 	//Upcoming page needs a chart for event vs. related event types / events in area
-
-	console.log(data.justAnnouncedByType);
 </script>
 
 <div>
@@ -97,11 +95,11 @@
 </div>
 <section class="flex flex-row flex-wrap gap-6 mt-6 justify-around">
 	{#await data.streamed.justAnnouncedByTypeDetails}
-		<!--
-		{#each data.justAnnouncedByType as newEvent}
-			<EventRecordsCard latestRecord={newEvent} eventRecords={null} />
+		{#each { length: 10 } as _}
+			<article class="card p-4 m-6 max-w-md">
+				<div class="h-36 w-80 animate-pulse" />
+			</article>
 		{/each}
-    -->
 	{:then justAnnouncedEventRecords}
 		{#each justAnnouncedEventRecords as eventRecords}
 			<EventRecordsCard latestRecord={eventRecords} eventRecords={eventRecords.records}>

@@ -4,11 +4,12 @@
 	import { flip } from 'svelte/animate';
 	import fuzzysort from 'fuzzysort';
 	import { sliceLong } from '$lib/utilities/utils';
+	import type { Writable } from 'svelte/store';
 	const dispatch = createEventDispatcher();
 	export let searchCol: string;
 	export let input = '';
 	export let value: string[] = [];
-	export let fzfwhitelist: string[] = [];
+	export let fzfwhitelist: Writable<string[]>;
 	export let duration = 150;
 	export let chips = 'variant-filled';
 	let chipValues =
@@ -32,7 +33,7 @@
 
 	function addChip(event) {
 		event.preventDefault();
-		input = fuzzysort.go(input, fzfwhitelist)[0]?.target;
+		input = fuzzysort.go(input, $fzfwhitelist)[0]?.target;
 		if (!input) return;
 		value.push(input);
 		value = value;

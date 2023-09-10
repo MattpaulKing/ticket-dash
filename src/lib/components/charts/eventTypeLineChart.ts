@@ -1,4 +1,6 @@
 import { htmlLegendPlugin } from "$lib/components/charts/utils/htmlLegend"
+import type { ChartConfiguration, DefaultDataPoint } from 'chart.js';
+import 'chartjs-adapter-date-fns';
 
 export const options = {
 		scales: {

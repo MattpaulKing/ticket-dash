@@ -1,9 +1,9 @@
 import type { DbResult, DbResultErr, Functions } from "$lib/types/db.types";
 import { transformDatasetData } from '$lib/components/charts/utils/transformations';
 import { error, type Actions, fail } from "@sveltejs/kit";
+import type { PageServerLoad } from './$types';
 
 export const actions = {
-
   add: async ({ request, locals }) => {
     const data = await request.formData()
     const session  = await locals.getSession()
@@ -18,10 +18,8 @@ export const actions = {
         message: "Please try again."
       })
     }
-
     return { success: true }
   },
-
   remove: async ({ request, locals }) => {
     const data = await request.formData()
     const { error: err } = await locals.supabase.from("Watchlist")
@@ -34,15 +32,14 @@ export const actions = {
         message: "Please try again."
       })
     }
-
     return { success: true }
   },
 } satisfies Actions
 
+export const load: PageServerLoad = async (
+  { locals, setHeaders }:
+  {locals: App.Locals, setHeaders: (headers: Record<string, string>) => void}) => {
 
-
-
-export const load = async ({ locals, setHeaders }: {locals: App.Locals, setHeaders: (headers: Record<string, string>) => void}) => {
   setHeaders({
      "cache-control": "max-age=360"
    })
@@ -74,18 +71,24 @@ export const load = async ({ locals, setHeaders }: {locals: App.Locals, setHeade
 				  monthlyEventAggs.filter((agg) => agg.eventType === totalEventTypeAggs[i].eventType)
 			  );
 		  }
-    const { data: justAnnouncedByType, error: justAnnouncedErr }: {data: Functions<"just_announced_by_type">, error: DbResultErr} = await locals.supabase.rpc("just_announced_by_type") as DbResult<Functions<"just_announced_by_type">>
-    if (justAnnouncedErr) {
-      throw error(500, "Error fetching recently announced events")
-    }
 
-    const justAnnouncedByTypeDetails = async (distinctJustAnnounced: Functions<"just_announced_by_type">): Promise<Functions<"just_announced_by_type_details">> => {
-      const { data, error } =  await locals.supabase.rpc("just_announced_by_type_details")
-      if (error) {
+    const justAnnouncedByTypeDetails = async (): Promise<Functions<"just_announced_by_type_details">> => {
+      const { data: distinctJustAnnounced, error: distinctJustAnnouncedErr }: 
+        { data: Functions<"just_announced_by_type">, error: DbResultErr }
+        = await locals.supabase.rpc("just_announced_by_type") as DbResult<Functions<"just_announced_by_type">>
+
+      if (distinctJustAnnouncedErr) {
+        throw error(500, "Error fetching recently announced events")
+      }
+
+      const { data, error: justAnnouncedDetailsErr } =  await locals.supabase.rpc("just_announced_by_type_details")
+      if (justAnnouncedDetailsErr) {
         console.log("Unable to find records for recent events")
       }
+
       return distinctJustAnnounced.map((distinctEvent) => {
-        const distinctEventRecords = data.filter((record: Functions<"just_announced_by_type_details">) => record.eventId === distinctEvent.eventId)
+        const distinctEventRecords =
+          data.filter((record: Functions<"just_announced_by_type_details">) => record.eventId === distinctEvent.eventId)
         return {
 			...distinctEvent,
       records: distinctEventRecords,
@@ -106,11 +109,9 @@ export const load = async ({ locals, setHeaders }: {locals: App.Locals, setHeade
     return {
         totalEventTypeAggs,
         splitMonthlyEventAggs,
-        justAnnouncedByType,
         streamed: {
-          justAnnouncedByTypeDetails: justAnnouncedByTypeDetails(justAnnouncedByType),
+          justAnnouncedByTypeDetails: justAnnouncedByTypeDetails(),
         }
     }
-};
-
+}
 

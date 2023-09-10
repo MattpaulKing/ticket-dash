@@ -20,6 +20,12 @@
 	import { writable } from 'svelte/store';
 	import { watchlistStore } from '$lib/components/Watchlist/watchlistStore';
 	import { onMount } from 'svelte';
+	import { stateAggStore } from '$lib/stores/stateAggStore';
+	import { typeAggStore } from '$lib/stores/typeAggStore';
+	import { distinctTypes } from '$lib/stores/distinctTypes';
+	import { distinctTitles } from '$lib/stores/distinctTitles';
+	import { distinctStates } from '$lib/stores/distinctStates';
+	import { dateRangeStore } from '$lib/stores/dateRangeStore';
 
 	Chart.defaults.elements.point.radius = 5;
 	Chart.defaults.plugins.title.align = 'start';
@@ -51,8 +57,24 @@
 	}
 	afterNavigate(() => ($showNavBar = false));
 
-	onMount(() => {
-		$watchlistStore = data.watchlistEventIds.map(({ eventId }: { eventId: number }) => eventId);
+	onMount(async () => {
+		$watchlistStore = data.watchlistIds.map(({ eventId }: { eventId: number }) => eventId);
+		const allStreamed = Promise.all([
+			data.filterOptions.typeAggsByMonth,
+			data.filterOptions.stateAggsByMonth,
+			data.filterOptions.distinctEventTypes,
+			data.filterOptions.distinctTitles,
+			data.filterOptions.distinctStates,
+			data.filterOptions.minMaxDates
+		]);
+		await allStreamed.then((streamedValues) => {
+			$typeAggStore = streamedValues[0];
+			$stateAggStore = streamedValues[1];
+			$distinctTypes = streamedValues[2];
+			$distinctTitles = streamedValues[3];
+			$distinctStates = streamedValues[4];
+			$dateRangeStore = streamedValues[5];
+		});
 	});
 </script>
 
@@ -91,9 +113,7 @@
 				{#await Promise.all(Object.values(data.filterOptions))}
 					<p>x</p>
 				{:then ogFilterOptions}
-					<Search {ogFilterOptions} />
-				{:catch error}
-					{JSON.stringify(error)}
+					<Search />
 				{/await}
 				<LightSwitch />
 				<div id="avatar-button">
