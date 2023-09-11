@@ -11,13 +11,13 @@
 		textPrefixFilter
 	} from 'svelte-headless-table/plugins';
 	import TextFilter from '$lib/utilities/TextFilter.svelte';
-	import type { IEvent } from '../types/IEvent';
 	import SortImage from './charts/utils/SortImage.svelte';
 	import { getDistinct, mean, latest } from './Tables/utils/utils';
 	import ExpandIndicator from './Tables/utils/ExpandIndicator.svelte';
 	import EventTitleLink from './Tables/utils/EventTitleLink.svelte';
+	import type { Tables } from '$lib/types/db.types';
 
-	export let events: IEvent[];
+	export let events: Tables<'sgEventsUpcoming'>[];
 	const eventStore = writable(events);
 	const table = createTable(eventStore, {
 		group: addGroupBy({ initialGroupByIds: ['eventType'] }),

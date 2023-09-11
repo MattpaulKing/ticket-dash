@@ -45,6 +45,7 @@
 
 	//TODO:
 	//Watchlist page should have a "view" when a card is clicked
+	//Recreate my own legend example from chartjs breaks constantly
 </script>
 
 <div>
