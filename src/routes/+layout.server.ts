@@ -27,7 +27,7 @@ export const load = async ({ locals }: { locals: App.Locals }) => {
     if (err) {
       throw error(500, err)
     }
-    return data.map( (obj: {eventType: string, eventScore: number}) => obj.eventType).slice(0,10)
+    return data.map( (obj: {eventType: string, eventScore: number}) => obj.eventType)
   }
 
   const getDistinctStates = async () => {

@@ -1,8 +1,3 @@
-import type { Chart } from "chart.js";
-
-type ChartOptionsAndContainerId <T> = Partial<T>
-   & { containerID: string }
-
 const getOrCreateLegendList = (chart, id) => {
   const legendContainer = document.getElementById(id);
   let listContainer = legendContainer.querySelector('ul');
@@ -11,10 +6,10 @@ const getOrCreateLegendList = (chart, id) => {
     listContainer = document.createElement('ul');
     listContainer.style.display = 'flex';
     listContainer.style.flexDirection = 'row';
-    listContainer.style.margin = '0';
-    listContainer.style.padding = '0';
+    listContainer.style.margin = 0;
+    listContainer.style.padding = 0;
 
-    legendContainer?.appendChild(listContainer);
+    legendContainer.appendChild(listContainer);
   }
 
   return listContainer;
@@ -22,8 +17,7 @@ const getOrCreateLegendList = (chart, id) => {
 
 export const htmlLegendPlugin = {
   id: 'htmlLegend',
-  //args can be passed into afterUpdate
-  afterUpdate(chart: Chart, args, options) {
+  afterUpdate(chart, args, options) {
     const ul = getOrCreateLegendList(chart, options.containerID);
 
     // Remove old legend items
@@ -49,7 +43,6 @@ export const htmlLegendPlugin = {
           chart.toggleDataVisibility(item.index);
         } else {
           chart.setDatasetVisibility(item.datasetIndex, !chart.isDatasetVisible(item.datasetIndex));
-          //TODO: add the item excluded to the filterStore
         }
         chart.update();
       };
@@ -60,16 +53,16 @@ export const htmlLegendPlugin = {
       boxSpan.style.borderColor = item.strokeStyle;
       boxSpan.style.borderWidth = item.lineWidth + 'px';
       boxSpan.style.display = 'inline-block';
-      boxSpan.style.flexShrink = '0';
+      boxSpan.style.flexShrink = 0;
       boxSpan.style.height = '20px';
       boxSpan.style.marginRight = '10px';
       boxSpan.style.width = '20px';
 
       // Text
       const textContainer = document.createElement('p');
-      textContainer.style.color = "white" //item.fontColor;
-      textContainer.style.margin = '0';
-      textContainer.style.padding = '0';
+      textContainer.style.color = item.fontColor;
+      textContainer.style.margin = 0;
+      textContainer.style.padding = 0;
       textContainer.style.textDecoration = item.hidden ? 'line-through' : '';
 
       const text = document.createTextNode(item.text);

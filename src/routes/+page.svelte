@@ -1,6 +1,7 @@
 <script lang="ts">
 	import 'chartjs-adapter-date-fns';
-	import { options, plugins } from '$lib/components/charts/eventTypeLineChart';
+	import { eventTypeLineChartOptions } from '$lib/components/charts/eventTypeLineChartOptions';
+	import { cardLineChartOptions } from '$lib/components/charts/cardLineChartOptions';
 	import { filterStore } from '$lib/components/Filters/filterStore';
 	import KpiCard from '$lib/components/KpiCard.svelte';
 	import { Line } from 'svelte-chartjs';
@@ -8,6 +9,7 @@
 	import { transformDatasetData } from '$lib/components/charts/utils/transformations';
 	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
 	import type { PageData } from './$types';
+	import { htmlLegendPlugin } from '$lib/components/charts/utils/htmlLegend';
 
 	export let data: PageData;
 	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount', 'eventScore'];
@@ -43,7 +45,6 @@
 
 	//TODO:
 	//Watchlist page should have a "view" when a card is clicked
-	//Upcoming page needs a chart for event vs. related event types / events in area
 </script>
 
 <div>
@@ -86,7 +87,11 @@
 			{#key $filterStore.eventType}
 				{#key yAxisSelected}
 					<div class="h-96 w-auto">
-						<Line data={lineChartDatasets} {options} {plugins} />
+						<Line
+							data={lineChartDatasets}
+							options={eventTypeLineChartOptions}
+							plugins={[htmlLegendPlugin]}
+						/>
 					</div>
 				{/key}
 			{/key}
@@ -102,9 +107,14 @@
 		{/each}
 	{:then justAnnouncedEventRecords}
 		{#each justAnnouncedEventRecords as eventRecords}
-			<EventRecordsCard latestRecord={eventRecords} eventRecords={eventRecords.records}>
+			<EventRecordsCard
+				latestRecord={eventRecords}
+				eventRecords={eventRecords.records}
+				comparisonType={'self'}
+				awaiting={false}
+			>
 				<svelte:fragment slot="chart">
-					<Line data={eventRecords.chartData} {options} />
+					<Line data={eventRecords.chartData} options={cardLineChartOptions} />
 				</svelte:fragment>
 			</EventRecordsCard>
 		{/each}

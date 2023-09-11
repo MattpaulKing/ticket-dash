@@ -1,10 +1,14 @@
 <script lang="ts">
+	import { stateAggStore } from '$lib/stores/stateAggStore';
+	import { typeAggStore } from '$lib/stores/typeAggStore';
 	import type { Tables } from '$lib/types/db.types';
+	import { totalAggregate } from '$lib/utilities/totalAggregate';
 	import WatchlistBtn from '../Watchlist/WatchlistBtn.svelte';
 
-	export let eventRecords: Tables<'sgEventsUpcoming'>[] | null;
+	export let eventRecords: Tables<'sgEventsUpcoming'>[] | null = null;
 	export let latestRecord: Tables<'sgEventsUpcoming'>;
-	let awaiting = eventRecords === null ? true : false;
+	export let comparisonType: 'eventType' | 'state' | 'self' = 'eventType';
+	export let awaiting: boolean;
 	let eventAgg: Partial<Tables<'sgEventsUpcoming'>> | undefined = {
 		averagePrice: 0,
 		eventScore: 0,
@@ -12,32 +16,18 @@
 		highestPrice: 0
 	};
 
-	//TODO: add options for the type of aggregation i.e. vs. itself or vs. state / event type etc.
 	if (!awaiting) {
-		eventAgg = eventRecords?.reduce(
-			(res, currRecord, idx, { length }) => {
-				if (idx === length - 1) {
-					return {
-						averagePrice: (res.averagePrice + currRecord.averagePrice) / length,
-						eventScore: (res.eventScore + currRecord.eventScore) / length,
-						eventPopularity: (res.eventPopularity + currRecord.eventPopularity) / length,
-						highestPrice: (res.highestPrice + currRecord.highestPrice) / length
-					};
-				} else {
-					return {
-						averagePrice: res.averagePrice + currRecord.averagePrice,
-						eventScore: res.eventScore + currRecord.eventScore,
-						eventPopularity: res.eventPopularity + currRecord.eventPopularity,
-						highestPrice: res.highestPrice + currRecord.highestPrice
-					};
-				}
-			},
-			{ averagePrice: 0, eventScore: 0, eventPopularity: 0, highestPrice: 0 }
-		);
+		if (comparisonType === 'eventType') {
+			eventAgg = totalAggregate([...$typeAggStore]);
+		} else if (comparisonType === 'state') {
+			eventAgg = totalAggregate([...$stateAggStore]);
+		} else if (comparisonType === 'self' && eventRecords !== null) {
+			eventAgg = totalAggregate(eventRecords);
+		}
 	}
 </script>
 
-<article class="card p-4 m-6 max-w-md">
+<article class="card p-4 my-6 max-w-md">
 	<div class="h-36 w-80 {awaiting ? 'animate-pulse' : ''}">
 		<slot name="chart" />
 	</div>
@@ -55,7 +45,7 @@
 		<WatchlistBtn dbId={latestRecord.id} eventId={latestRecord.eventId} />
 	</div>
 	<div class="m-2">
-		<div class="grid grid-cols-[40%_60%] gap-4 justify-between place-items-center h-full">
+		<div class="grid grid-cols-[40%_60%] gap-2 justify-between place-items-center h-full">
 			<div class="flex flex-col">
 				<p class="capitalize">{latestRecord.eventType.replaceAll('_', ' ')}</p>
 				<span class="flex gap-1"
@@ -73,44 +63,46 @@
 			</div>
 			<div class="flex flex-col h-full place-content-start">
 				<span class="flex gap-2"
-					><p class="whitespace-nowrap">Score: {latestRecord.eventScore.toFixed(3)}</p>
+					><p class="whitespace-nowrap">Score: {latestRecord.eventScore?.toFixed(3)}</p>
 					{#if !awaiting}
 						{@const scoreDiff =
 							((latestRecord.eventScore - eventAgg.eventScore) / latestRecord.eventScore) * 100}
 						<p class={scoreDiff >= -0.9 ? 'text-green-500' : 'text-red-500'}>
-							{scoreDiff.toFixed(0)}%
+							{scoreDiff?.toFixed(0)}%
 						</p>
 					{/if}
 				</span>
 				<span class="flex gap-2">
-					<p class="whitespace-normal">Pop: {latestRecord.eventPopularity.toFixed(3)}</p>
+					<p class="whitespace-normal">Pop: {latestRecord.eventPopularity?.toFixed(3)}</p>
 					{#if !awaiting}
 						{@const popularityDiff =
 							((latestRecord.eventPopularity - eventAgg.eventPopularity) /
 								latestRecord.eventPopularity) *
 							100}
 						<p class={popularityDiff > 0 ? 'text-green-500' : 'text-red-500'}>
-							{popularityDiff.toFixed(0)}%
+							{popularityDiff?.toFixed(0)}%
 						</p>
 					{/if}
 				</span>
 				<span class="flex gap-2">
-					<p class="whitespace-normal">Price: {latestRecord.averagePrice.toFixed(0)}</p>
+					<p class="whitespace-normal">Price: {latestRecord.averagePrice?.toFixed(0)}</p>
 					{#if !awaiting}
 						{@const priceDiff =
 							((latestRecord.averagePrice - eventAgg.averagePrice) / latestRecord.averagePrice) *
 							100}
-						<p class={priceDiff > 0 ? 'text-green-500' : 'text-red-500'}>{priceDiff.toFixed(0)}%</p>
+						<p class={priceDiff > 0 ? 'text-green-500' : 'text-red-500'}>
+							{priceDiff?.toFixed(0)}%
+						</p>
 					{/if}
 				</span>
 				<span class="flex gap-2">
-					<p class="whitespace-normal">Highest: {latestRecord.highestPrice.toFixed(0)}</p>
+					<p class="whitespace-nowrap">High: {latestRecord.highestPrice?.toFixed(0)}</p>
 					{#if !awaiting}
 						{@const highestPriceDiff =
 							((latestRecord.highestPrice - eventAgg.highestPrice) / latestRecord.highestPrice) *
 							100}
 						<p class={highestPriceDiff > 0 ? 'text-green-500' : 'text-red-500'}>
-							{highestPriceDiff.toFixed(0)}%
+							{highestPriceDiff?.toFixed(0)}%
 						</p>
 					{/if}
 				</span>

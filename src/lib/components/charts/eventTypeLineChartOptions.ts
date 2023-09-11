@@ -1,19 +1,17 @@
-import { htmlLegendPlugin } from "$lib/components/charts/utils/htmlLegend"
-import type { ChartConfiguration, DefaultDataPoint } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
-export const options = {
+export const eventTypeLineChartOptions = {
 		scales: {
 			x: {
 				display: true,
-				type: 'time',
+				type: 'timeseries',
 				time: {
 					displayFormats: {
 						month: 'yyyy-MMM'
 					},
 					tooltipFormat: 'yyyy-MMM'
 				},
-				max: new Date()
+				max: new Date().toISOString()
 			},
 			y: {
 				display: true
@@ -23,13 +21,12 @@ export const options = {
 		aspectRatio: 2,
 		maintainAspectRatio: false,
 		plugins: {
-			htmlLegend: {
-				containerID: 'legend-container'
-			},
+      htmlLegend: {
+        containerID: 'legend-container'
+      },
 			legend: {
 				display: false
 			}
 		}
-	};
-	export const plugins = [htmlLegendPlugin];
+};
 

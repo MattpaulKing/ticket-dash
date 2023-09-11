@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { Line } from 'svelte-chartjs';
-	import { options, plugins } from '$lib/components/charts/eventTypeLineChart';
+	import { eventTypeLineChartOptions } from '$lib/components/charts/eventTypeLineChartOptions';
 	import { typeAggStore } from '$lib/stores/typeAggStore.js';
 	import { transformDatasetData } from '$lib/components/charts/utils/transformations.js';
 	import { distinctTypes } from '$lib/stores/distinctTypes.js';
 	import EventTable from '$lib/components/EventTable.svelte';
-	import EventListShort from '$lib/components/EventListShort.svelte';
+	import { htmlLegendPlugin } from '$lib/components/charts/utils/htmlLegend';
+	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
+	import { cardLineChartOptions } from '$lib/components/charts/cardLineChartOptions';
 	export let data;
 
-	$: chartDataset = {
+	const baseChartData = {
 		datasets: $distinctTypes.map((distinctType) => ({
 			label: distinctType,
 			data: transformDatasetData(
@@ -17,15 +19,39 @@
 			)
 		}))
 	};
+
+	$: mainChartData = {
+		datasets: [...baseChartData.datasets].filter((agg) => $distinctTypes.includes(agg.label))
+	};
 </script>
 
 <div class="flex gap-6">
-	<div class="flex w-1/4">
-		<EventListShort events={data.lastWeekEvents} />
+	<div
+		class="rounded-container-token bg-surface-100-800-token p-4 flex flex-col w-1/4 overflow-y-auto h-[60vh]"
+	>
+		{#each data.lastWeekEvents as event}
+			<EventRecordsCard
+				latestRecord={event}
+				eventRecords={null}
+				comparisonType={'eventType'}
+				awaiting={false}
+			>
+				<svelte:fragment slot="chart">
+					<Line
+						data={{
+							datasets: baseChartData.datasets.filter(
+								(dataset) => dataset.label === event.eventType
+							)
+						}}
+						options={cardLineChartOptions}
+					/>
+				</svelte:fragment>
+			</EventRecordsCard>
+		{/each}
 	</div>
-	<div class="w-3/4 h-[75vh] card p-8">
+	<div class="w-3/4 h-[60vh] card p-8">
 		<div id="legend-container" />
-		<Line data={chartDataset} {options} {plugins} />
+		<Line data={mainChartData} options={eventTypeLineChartOptions} plugins={[htmlLegendPlugin]} />
 	</div>
 </div>
 
