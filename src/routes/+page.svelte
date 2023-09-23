@@ -7,9 +7,10 @@
 	import { Line } from 'svelte-chartjs';
 	import { indexOfFirstUppercase } from '$lib/utilities/utils.js';
 	import { transformDatasetData } from '$lib/components/charts/utils/transformations';
-	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
+	import EventRecordsCard from '$lib/components/Cards/Summary/Card.svelte';
 	import type { PageData } from './$types';
 	import { htmlLegendPlugin } from '$lib/components/charts/utils/htmlLegend';
+	import { chartDataTransformer } from '$lib/components/charts/utils/chartDataTransformer';
 
 	export let data: PageData;
 	const yAxisKeys = ['averagePrice', 'highestPrice', 'listingCount', 'eventScore'];

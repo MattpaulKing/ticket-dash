@@ -88,7 +88,7 @@ export const load: PageServerLoad = async (
 
       return distinctJustAnnounced.map((distinctEvent) => {
         const distinctEventRecords =
-          data.filter((record: Functions<"just_announced_by_type_details">) => record.eventId === distinctEvent.eventId)
+          data.filter((record: Functions<"just_announced_by_type_details">[0]) => record.eventId === distinctEvent.eventId)
         return {
 			...distinctEvent,
       records: distinctEventRecords,

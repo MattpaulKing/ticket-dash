@@ -1,3 +1,5 @@
+import 'chartjs-adapter-date-fns';
+
 export const cardLineChartOptions = {
 		scales: {
 			x: {

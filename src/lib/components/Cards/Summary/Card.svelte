@@ -3,7 +3,8 @@
 	import { typeAggStore } from '$lib/stores/typeAggStore';
 	import type { Tables } from '$lib/types/db.types';
 	import { totalAggregate } from '$lib/utilities/totalAggregate';
-	import WatchlistBtn from '../Watchlist/WatchlistBtn.svelte';
+	import { setContext } from 'svelte';
+	import WatchlistBtn from '$lib/components/Watchlist/WatchlistBtn.svelte';
 
 	export let eventRecords: Tables<'sgEventsUpcoming'>[] | null = null;
 	export let latestRecord: Tables<'sgEventsUpcoming'>;
@@ -25,6 +26,7 @@
 			eventAgg = totalAggregate(eventRecords);
 		}
 	}
+	setContext('chartData', eventRecords);
 </script>
 
 <article class="card p-4 my-6 max-w-md">
@@ -36,7 +38,7 @@
 	>
 		<div
 			data-tooltip={latestRecord.title}
-			class="w-2/4 relative content-none hover:before:content-[attr(data-tooltip)] hover:before:absolute before:-translate-y-full hover:before:whitespace-nowrap hover:before:bg-surface-50-900-token hover:before:p-2 hover:before:font-bold"
+			class="w-52 relative content-none hover:before:content-[attr(data-tooltip)] hover:before:absolute before:-translate-y-full hover:before:whitespace-nowrap hover:before:bg-surface-50-900-token hover:before:p-2 hover:before:font-bold"
 		>
 			<h1 class="truncate">
 				{latestRecord.title}

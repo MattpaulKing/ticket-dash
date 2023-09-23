@@ -6,7 +6,7 @@
 	import { distinctTypes } from '$lib/stores/distinctTypes.js';
 	import EventTable from '$lib/components/EventTable.svelte';
 	import { htmlLegendPlugin } from '$lib/components/charts/utils/htmlLegend';
-	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
+	import EventRecordsCard from '$lib/components/Cards/Summary/Card.svelte';
 	import { cardLineChartOptions } from '$lib/components/charts/cardLineChartOptions';
 	export let data;
 

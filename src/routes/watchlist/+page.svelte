@@ -1,17 +1,24 @@
 <script lang="ts">
-	import EventRecordsCard from '$lib/components/Cards/EventRecordsCard.svelte';
-	import type { Tables } from '$lib/types/db.types.js';
-
+	import Card from '$lib/components/Cards/Summary/Card.svelte';
+	import { cardLineChartOptions } from '$lib/components/charts/cardLineChartOptions.js';
+	import { Line } from 'svelte-chartjs';
 	export let data;
-	const watchlistRecords: Tables<'sgEventsUpcoming'>[][] = data.watchlistRecords;
-
-	//TODO: Make this a realtime connection
+	let options = cardLineChartOptions;
 </script>
 
 <div>
 	<h1>Watchlist</h1>
 	<div class="flex" />
 	{#each data.watchlistRecords as eventRecords}
-		<EventRecordsCard awaiting={false} latestRecord={eventRecords[0]} {eventRecords} />
+		<Card
+			awaiting={false}
+			latestRecord={eventRecords.latest}
+			eventRecords={eventRecords.records}
+			comparisonType={'self'}
+		>
+			<svelte:fragment slot="chart">
+				<Line data={{ datasets: eventRecords.datasets }} {options} />
+			</svelte:fragment>
+		</Card>
 	{/each}
 </div>

@@ -1,5 +1,3 @@
-//generated using npx supabase gen types typescript --project-id "{$PROJECT_ID}" --schema public > ./src/lib/types/db.ts
-
 export type Json =
   | string
   | number

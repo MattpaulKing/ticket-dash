@@ -1,5 +1,6 @@
 import type { Tables } from "$lib/types/db.types"
-export const totalAggregate = (records: Partial<Tables<"sgEventsUpcoming">>[]) => {
+import type { ChartData } from "chart.js";
+export const totalAggregate = (records: Partial<Tables<"sgEventsUpcoming"> | ChartData<'line'>>[]) => {
   return records.reduce(
 			(res, currRecord, idx, { length }) => {
 				if (idx === length - 1) {

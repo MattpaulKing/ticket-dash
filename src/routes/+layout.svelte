@@ -56,9 +56,9 @@
 		}
 	}
 	afterNavigate(() => ($showNavBar = false));
+	$watchlistStore = data.watchlistIds.map(({ eventId }: { eventId: number }) => eventId);
 
 	onMount(async () => {
-		$watchlistStore = data.watchlistIds.map(({ eventId }: { eventId: number }) => eventId);
 		const allStreamed = Promise.all([
 			data.filterOptions.typeAggsByMonth,
 			data.filterOptions.stateAggsByMonth,
